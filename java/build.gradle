@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+}
+dependencies {
+    // JUnit 4 framework
+    testImplementation "junit:junit:4.13.2"
+    // Mockito framework
+    testImplementation 'org.mockito:mockito-core:3.9.0'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:3.2.0'
+
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1"
+}
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
