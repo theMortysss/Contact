@@ -4,10 +4,8 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
@@ -26,7 +24,7 @@ object PermissionsAccessHelper {
         var availability = true
         for (permission in permissions) {
             val checkPermission = ActivityCompat.checkSelfPermission(context, permission)
-            Log.d(TAG, "${permission}: $checkPermission")
+            Log.d(TAG, "$permission: $checkPermission")
             if (checkPermission != PackageManager.PERMISSION_GRANTED) availability = false
         }
         return availability
@@ -39,18 +37,21 @@ object PermissionsAccessHelper {
         activity: AppCompatActivity,
         permissions: Array<String>,
         showIntro: Boolean
-    )  {
-        requiredPermissions =  permissions
+    ) {
+        requiredPermissions = permissions
         Log.d(TAG, "Начинаю запрос разрешений у пользователя...")
         if (showIntro) { // Показать предупреждение пользователю перед запросом разрешений...
             if (!isPermissionsAvailable(activity.applicationContext, permissions)) {
                 introDialog.isCancelable = false
                 introDialog.show(activity.supportFragmentManager, DIALOG_TAG)
+            } else {
+                activity.requestPermissions(requiredPermissions, PERMISSION_REQUEST_CODE)
             }
-            else activity.requestPermissions(requiredPermissions, PERMISSION_REQUEST_CODE)
         }
         // иначе запросить разрешения без предупреждения
-        else activity.requestPermissions(requiredPermissions, PERMISSION_REQUEST_CODE)
+        else {
+            activity.requestPermissions(requiredPermissions, PERMISSION_REQUEST_CODE)
+        }
     }
 
     // Функция предназначена для вызова в колбеке onRequestPermissionsResult, для разбора
@@ -72,8 +73,9 @@ object PermissionsAccessHelper {
                 epilogueDialog.isCancelable = false
                 epilogueDialog.show(activity.supportFragmentManager, DIALOG_TAG)
             }
+        } else {
+            Log.d(TAG, "Все разрешения получены.")
         }
-        else Log.d(TAG, "Все разрешения получены.")
         return success
     }
 
@@ -84,7 +86,11 @@ object PermissionsAccessHelper {
             return requireActivity().let {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Permissions required")
-                    .setMessage("Now you will be asked for permissions, without which the application will not be able to work. Please confirm all requested permissions.")
+                    .setMessage(
+                        "Now you will be asked for permissions, " +
+                            "without which the application will not be able to work. " +
+                            "Please confirm all requested permissions."
+                    )
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                         requireActivity().requestPermissions(
                             requiredPermissions,

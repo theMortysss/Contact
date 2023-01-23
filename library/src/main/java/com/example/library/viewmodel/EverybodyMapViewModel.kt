@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.java.entities.LocatedContact
-import com.example.library.utils.Constants.TAG
 import com.example.java.interactors.map.everybody.EverybodyMapInteractor
+import com.example.library.utils.Constants.TAG
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

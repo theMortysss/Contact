@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.java.entities.Contact
 import com.example.java.entities.LocationData
-import com.example.library.utils.Constants.TAG
 import com.example.java.interactors.contact.ContactDetailsInteractor
+import com.example.library.utils.Constants.TAG
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -65,5 +65,4 @@ class ContactDetailsViewModel @Inject constructor(
             Log.d(TAG, "ContactDetailsViewModel данные контакта получены.")
         }
     }
-
 }

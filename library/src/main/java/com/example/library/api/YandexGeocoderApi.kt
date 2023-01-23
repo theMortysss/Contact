@@ -8,8 +8,7 @@ interface YandexGeocoderApi {
 
     @GET("1.x/?format=json&results=1&")
     suspend fun reverseGeocoding(
-        @Query("geocode") geocode : String,
-        @Query("apikey") apikey : String
-    ) : YandexGeocodeResponse
-
+        @Query("geocode") geocode: String,
+        @Query("apikey") apikey: String
+    ): YandexGeocodeResponse
 }

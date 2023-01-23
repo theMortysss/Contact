@@ -1,14 +1,12 @@
 package com.example.library.repository.geocoder
 
-import android.content.Context
 import com.example.java.interfaces.IYandexGeocoderRepository
 import com.example.library.api.YandexGeocoderApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class YandexGeocoderRepository(
-    private val api: YandexGeocoderApi,
-    private val appContext: Context
+    private val api: YandexGeocoderApi
 ) : IYandexGeocoderRepository {
 
     override suspend fun reverseGeocoding(
@@ -24,6 +22,8 @@ class YandexGeocoderRepository(
         }
         return if (featureMemberList.isNotEmpty()) {
             featureMemberList[0].geoObject.metaDataProperty.geocoderMetaData.address.formatted
-        } else "Address not defined"
+        } else {
+            "Address not defined"
+        }
     }
 }

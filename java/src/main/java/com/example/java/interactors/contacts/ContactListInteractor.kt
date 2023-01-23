@@ -4,5 +4,5 @@ import com.example.java.entities.ShortContact
 
 interface ContactListInteractor {
 
-    suspend fun getContacts(query : String) : List<ShortContact>
+    suspend fun getContacts(query: String): List<ShortContact>
 }

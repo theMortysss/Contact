@@ -1,7 +1,6 @@
 package com.example.library
 
 import android.Manifest
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -24,8 +23,12 @@ import com.yandex.mapkit.transport.TransportFactory
 // Значение интента при старте активити по ярлыку на экране
 private const val LAUNCHER_START_INTENT = "android.intent.action.MAIN"
 
-class MainActivity : AppCompatActivity(), OnContactListCallback, OnContactMapCallback,
-    OnEverybodyMapCallback, OnRouteMapCallback {
+class MainActivity :
+    AppCompatActivity(),
+    OnContactListCallback,
+    OnContactMapCallback,
+    OnEverybodyMapCallback,
+    OnRouteMapCallback {
 
     private val askPermissions = arrayOf(
         Manifest.permission.READ_CONTACTS
@@ -41,7 +44,6 @@ class MainActivity : AppCompatActivity(), OnContactListCallback, OnContactMapCal
         MapKitFactory.initialize(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //setSupportActionBar(findViewById(toolbar))
         if (savedInstanceState == null) {
             startPermissionsRequest(
                 activity = this,
@@ -52,7 +54,8 @@ class MainActivity : AppCompatActivity(), OnContactListCallback, OnContactMapCal
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>,
+        requestCode: Int,
+        permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -65,14 +68,6 @@ class MainActivity : AppCompatActivity(), OnContactListCallback, OnContactMapCal
             chooseNavigation()
         }
     }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        if (item.itemId == R.id.everybodyToolbarBtn) {
-//            navigateToBaseMapFragment("", MapScreenMode.EVERYBODY)
-//        }
-//        return super.onOptionsItemSelected(item)
-//    }
-
 
     private fun chooseNavigation() {
         if (!activityStartedByNotification) {
@@ -102,8 +97,9 @@ class MainActivity : AppCompatActivity(), OnContactListCallback, OnContactMapCal
                 ContactDetailsFragment.newInstance(contactId),
                 ContactDetailsFragment.FRAGMENT_NAME
             )
-        if (!activityStartedByNotification)
+        if (!activityStartedByNotification) {
             transaction.addToBackStack(ContactDetailsFragment.FRAGMENT_NAME)
+        }
         transaction.commit()
     }
 
@@ -139,5 +135,4 @@ class MainActivity : AppCompatActivity(), OnContactListCallback, OnContactMapCal
             .addToBackStack(RouteMapFragment.FRAGMENT_NAME)
             .commit()
     }
-
 }

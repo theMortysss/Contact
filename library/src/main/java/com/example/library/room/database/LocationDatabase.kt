@@ -8,5 +8,5 @@ import com.example.library.room.entity.LocationEntity
 @Database(entities = [LocationEntity::class], version = 1)
 abstract class LocationDatabase : RoomDatabase() {
 
-    abstract fun locationDao() : LocationDao
+    abstract fun locationDao(): LocationDao
 }

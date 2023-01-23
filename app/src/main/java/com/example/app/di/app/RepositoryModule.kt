@@ -2,8 +2,12 @@ package com.example.app.di.app
 
 import android.content.ContentResolver
 import android.content.Context
+import com.example.java.interfaces.IBirthdayRepository
+import com.example.java.interfaces.ICalendarRepository
+import com.example.java.interfaces.IContactsRepository
+import com.example.java.interfaces.ILocationRepository
+import com.example.java.interfaces.IYandexGeocoderRepository
 import com.example.library.api.YandexGeocoderApi
-import com.example.java.interfaces.*
 import com.example.library.repository.alarm.BirthdayRepository
 import com.example.library.repository.alarm.CalendarRepository
 import com.example.library.repository.contacts.ContactsRepository
@@ -19,31 +23,30 @@ class RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideContactsRepository(contentResolver: ContentResolver) : IContactsRepository =
+    fun provideContactsRepository(contentResolver: ContentResolver): IContactsRepository =
         ContactsRepository(contentResolver)
 
     @Singleton
     @Provides
-    fun provideLocationRepository (
+    fun provideLocationRepository(
         database: LocationDatabase,
         contactsRepositoryInterface: IContactsRepository
-    ) : ILocationRepository =
+    ): ILocationRepository =
         LocationRepository(database, contactsRepositoryInterface)
 
     @Singleton
     @Provides
     fun provideYandexGeocoderRepository(
-        api: YandexGeocoderApi,
-        appContext: Context
-    ): IYandexGeocoderRepository = YandexGeocoderRepository(api, appContext)
+        api: YandexGeocoderApi
+    ): IYandexGeocoderRepository = YandexGeocoderRepository(api)
 
     @Singleton
     @Provides
     fun provideBirthdayRepository(
         appContext: Context
-    ) : IBirthdayRepository = BirthdayRepository(appContext)
+    ): IBirthdayRepository = BirthdayRepository(appContext)
 
     @Singleton
     @Provides
-    fun provideCalendarRepository() : ICalendarRepository = CalendarRepository()
+    fun provideCalendarRepository(): ICalendarRepository = CalendarRepository()
 }

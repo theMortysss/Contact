@@ -17,6 +17,4 @@ class AppModule(private val application: Application) {
     @Singleton
     @Provides
     fun provideContentResolver(): ContentResolver = application.contentResolver
-
-
 }

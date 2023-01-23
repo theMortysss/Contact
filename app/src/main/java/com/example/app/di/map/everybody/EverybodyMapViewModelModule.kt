@@ -8,10 +8,10 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 
 @Module
-abstract class EverybodyMapViewModelModule {
+interface EverybodyMapViewModelModule {
 
     @Binds
     @IntoMap
     @ViewModelKey(EverybodyMapViewModel::class)
-    abstract fun bindEverybodyMapViewModel(viewModel: EverybodyMapViewModel) : ViewModel
+    fun bindEverybodyMapViewModel(viewModel: EverybodyMapViewModel): ViewModel
 }

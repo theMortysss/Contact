@@ -49,17 +49,17 @@ class ContactDetailsModel(
         val today = calendarRepository.now()
         val curYear = today[Calendar.YEAR]
         val alarmStartMoment = today.clone() as Calendar
-        if (contactBirthday[Calendar.DAY_OF_MONTH] == DAY_OF_MONTH_29
-            && contactBirthday[Calendar.MONTH] == Calendar.FEBRUARY
+        if (contactBirthday[Calendar.DAY_OF_MONTH] == DAY_OF_MONTH_29 &&
+            contactBirthday[Calendar.MONTH] == Calendar.FEBRUARY
         ) { // ДР контакта = 29 февраля
-            val remainder = curYear % 4 // високосные годы делятся на 4 без остатка
+            val remainder = curYear % LEAP_YEAR_PERIOD // високосные годы делятся на 4 без остатка
             if (remainder == 0) { // если текущий год високосный,
                 alarmStartMoment[Calendar.DAY_OF_MONTH] = DAY_OF_MONTH_29
                 alarmStartMoment[Calendar.MONTH] = Calendar.FEBRUARY
-                //alarmStartMoment[Calendar.YEAR] = curYear
-                //}
+                // alarmStartMoment[Calendar.YEAR] = curYear
+                // }
                 // если 29 февраля в этом году, но уже прошло, перенести его на 4 года вперед
-                if (alarmStartMoment.before(today)) alarmStartMoment[Calendar.YEAR] = curYear + 4
+                if (alarmStartMoment.before(today)) alarmStartMoment[Calendar.YEAR] = curYear + LEAP_YEAR_PERIOD
             } else {
                 // если текущий год не високосный, вычислить ближайший високосный
                 alarmStartMoment[Calendar.DAY_OF_MONTH] = DAY_OF_MONTH_29
@@ -73,8 +73,9 @@ class ContactDetailsModel(
             // Для демонстрации время срабатывания устанавливается текущее + ALARM_SECOND_SHIFT
             alarmStartMoment.add(Calendar.SECOND, ALARM_SECOND_SHIFT)
             // Если ДР в этом году, но уже прошло, перенести напоминание на следующий год
-            if (alarmStartMoment.before(today))
+            if (alarmStartMoment.before(today)) {
                 alarmStartMoment[Calendar.YEAR] = curYear + 1
+            }
         }
         return alarmStartMoment
     }

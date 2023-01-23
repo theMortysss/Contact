@@ -12,9 +12,10 @@ class LocationDatabaseModule {
 
     @Singleton
     @Provides
-    fun provideLocationDatabase(context: Context) : LocationDatabase =
+    fun provideLocationDatabase(context: Context): LocationDatabase =
         Room.databaseBuilder(
             context,
-            LocationDatabase::class.java, "LocationDatabase"
+            LocationDatabase::class.java,
+            "LocationDatabase"
         ).build()
 }

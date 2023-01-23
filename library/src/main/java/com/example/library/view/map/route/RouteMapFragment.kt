@@ -7,10 +7,10 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
-import com.example.library.di.HasAppComponent
 import com.example.java.entities.LocatedContact
 import com.example.library.R
 import com.example.library.databinding.FragmentRouteMapBinding
+import com.example.library.di.HasAppComponent
 import com.example.library.utils.injectViewModel
 import com.example.library.view.map.ContactDialogFragment
 import com.example.library.view.map.DIALOG_REQUEST
@@ -29,36 +29,44 @@ import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.PolylineMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.transport.TransportFactory
-import com.yandex.mapkit.transport.masstransit.*
+import com.yandex.mapkit.transport.masstransit.PedestrianRouter
+import com.yandex.mapkit.transport.masstransit.Route
+import com.yandex.mapkit.transport.masstransit.SectionMetadata
+import com.yandex.mapkit.transport.masstransit.Session
+import com.yandex.mapkit.transport.masstransit.TimeOptions
 import com.yandex.runtime.Error
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
-import kotlinx.android.synthetic.main.fragment_route_map.map
 import javax.inject.Inject
 
-
 const val SELECTED_CONTACT_ID = "selected_id"
+const val IZHEVSK_LATITUDE = 56.851
+const val IZHEVSK_LONGITUDE = 53.214
+const val ZOOM = 12f
+const val DURATION = 5f
+const val AZIMUTH = 0.0f
+const val TILT = 0.0f
+
+private val TARGET_LOCATION = Point(IZHEVSK_LATITUDE, IZHEVSK_LONGITUDE)
 
 class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
 
-    private val TARGET_LOCATION = Point(56.851, 53.214)
-
-    private var routeMapFrag : FragmentRouteMapBinding? = null
+    private var routeMapFrag: FragmentRouteMapBinding? = null
     private var pdRouter: PedestrianRouter? = null
     private val points: MutableList<RequestPoint> = ArrayList()
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var routeMapViewModel : RouteMapViewModel
-    private lateinit var locatedContactList : List<LocatedContact>
+    private lateinit var routeMapViewModel: RouteMapViewModel
+    private lateinit var locatedContactList: List<LocatedContact>
     private lateinit var curLocatedContact: LocatedContact
-    private lateinit var curContactId : String
-    private lateinit var mapView : MapView
+    private lateinit var curContactId: String
+    private lateinit var mapView: MapView
     private lateinit var mapObjects: MapObjectCollection
     private lateinit var placemark: PlacemarkMapObject
     private lateinit var dialogFragment: ContactDialogFragment
     private lateinit var secondLocatedContact: LocatedContact
-    private lateinit var polylineMapObject : PolylineMapObject
+    private lateinit var polylineMapObject: PolylineMapObject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +80,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         routeMapFrag = FragmentRouteMapBinding.bind(view)
-        mapView = map as MapView
+        mapView = routeMapFrag!!.map as MapView
         mapObjects = mapView.map.mapObjects.addCollection()
         mapView.map.setMapLoadedListener(mapLoadedListener)
         curContactId = arguments?.getString(CONTACT_ID, "") ?: ""
@@ -82,7 +90,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
                 if (locatedContactList.isNotEmpty()) {
                     curLocatedContact = locatedContactList
                         .firstOrNull { it.id == curContactId } ?: locatedContactList[0]
-                    //curContactId = curLocatedContact.id
+                    // curContactId = curLocatedContact.id
                     showFirstContact(curLocatedContact)
                     routeMapFrag?.apply {
                         tv2.text = "Пользователь не выбран"
@@ -101,16 +109,26 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
             }
     }
 
-    private val contactListener : (String, Bundle) -> Unit = { _, bundle ->
+    private val contactListener: (String, Bundle) -> Unit = { _, bundle ->
         if (points.isNotEmpty()) points.clear()
         val id = bundle.getInt(SELECTED_CONTACT_ID)
         secondLocatedContact = locatedContactList[id]
         showSecondContact(secondLocatedContact)
 
-        points.add(RequestPoint(Point(curLocatedContact.latitude, curLocatedContact.longitude),
-            RequestPointType.WAYPOINT, null))
-        points.add(RequestPoint(Point(secondLocatedContact.latitude, secondLocatedContact.longitude),
-            RequestPointType.WAYPOINT, null))
+        points.add(
+            RequestPoint(
+                Point(curLocatedContact.latitude, curLocatedContact.longitude),
+                RequestPointType.WAYPOINT,
+                null
+            )
+        )
+        points.add(
+            RequestPoint(
+                Point(secondLocatedContact.latitude, secondLocatedContact.longitude),
+                RequestPointType.WAYPOINT,
+                null
+            )
+        )
 
         pdRouter = TransportFactory.getInstance().createPedestrianRouter()
         pdRouter!!.requestRoutes(points, TimeOptions(), routeListener)
@@ -147,7 +165,8 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
                     drawSection(
                         section.metadata.data,
                         SubpolylineHelper.subpolyline(
-                            routes[0].geometry, section.geometry
+                            routes[0].geometry,
+                            section.geometry
                         )
                     )
                 }
@@ -160,8 +179,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
                 errorMessage = "remote_error_message"
             } else if (error is NetworkError) {
                 errorMessage = "network_error_message"
-            } else
-                errorMessage = "не удалось проложить маршрут"
+            }
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
 
@@ -196,8 +214,8 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
             }
         }
         mapView.map.move(
-            CameraPosition(TARGET_LOCATION, 12.0f, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 5f),
+            CameraPosition(TARGET_LOCATION, ZOOM, AZIMUTH, TILT),
+            Animation(Animation.Type.SMOOTH, DURATION),
             null
         )
         routeMapFrag?.addSecondContactFab?.setOnClickListener {
@@ -206,7 +224,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     }
 
     override fun onStop() {
-        map!!.onStop()
+        routeMapFrag!!.map.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
     }
@@ -214,7 +232,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
-        map!!.onStart()
+        routeMapFrag!!.map.onStart()
     }
 
     override fun onDestroyView() {

@@ -7,11 +7,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.library.MainActivity
 import com.example.library.utils.Constants.BIRTHDAY_MESSAGE
 import com.example.library.utils.Constants.CHANNEL_ID
 import com.example.library.utils.Constants.CONTACT_ID
 import com.example.library.utils.Constants.TAG
-import com.example.library.MainActivity
 
 class BirthdayReceiver : BroadcastReceiver() {
     @SuppressLint("UnspecifiedImmutableFlag")
@@ -21,8 +21,10 @@ class BirthdayReceiver : BroadcastReceiver() {
             val contactId = bundleData.getString(CONTACT_ID)
             val notificationIntent = Intent(context, MainActivity::class.java).apply {
                 putExtra(CONTACT_ID, contactId)
-                addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-                        or Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+                        or Intent.FLAG_ACTIVITY_NEW_TASK
+                )
             }
             val notificationPendingIntent: PendingIntent = PendingIntent.getActivity(
                 context,
@@ -39,9 +41,8 @@ class BirthdayReceiver : BroadcastReceiver() {
                 .setContentIntent(notificationPendingIntent)
                 .setAutoCancel(true)
             // Запустить отображение нотификации на экране
-            NotificationManagerCompat.from(context).
-            notify(TAG, contactId.hashCode(), notificationBuilder.build())
+            NotificationManagerCompat.from(context)
+                .notify(TAG, contactId.hashCode(), notificationBuilder.build())
         }
-
     }
 }

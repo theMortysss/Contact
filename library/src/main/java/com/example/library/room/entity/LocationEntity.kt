@@ -1,7 +1,7 @@
 package com.example.library.room.entity
 
-import androidx.room.PrimaryKey
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.example.java.entities.LocatedContact
 
 @Entity(tableName = "marks_location_table")

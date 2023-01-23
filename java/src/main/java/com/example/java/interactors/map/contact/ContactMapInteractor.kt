@@ -5,7 +5,7 @@ import com.example.java.entities.ShortContact
 
 interface ContactMapInteractor {
 
-    suspend fun getLocatedContactList() : List<LocatedContact>?
+    suspend fun getLocatedContactList(): List<LocatedContact>?
 
     suspend fun updateContactLocation(locatedContact: LocatedContact)
 

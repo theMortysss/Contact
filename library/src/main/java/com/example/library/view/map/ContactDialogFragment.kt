@@ -28,7 +28,8 @@ class ContactDialogFragment : DialogFragment() {
             .setTitle("Выберите второй контакт")
             .setAdapter(contactListAdapter) { _, i ->
                 setFragmentResult(
-                    DIALOG_REQUEST, bundleOf(SELECTED_CONTACT_ID to i)
+                    DIALOG_REQUEST,
+                    bundleOf(SELECTED_CONTACT_ID to i)
                 )
             }
             .create()

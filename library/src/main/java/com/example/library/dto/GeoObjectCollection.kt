@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class GeoObjectCollection(
     @SerializedName("metaDataProperty")
-    val metaDataProperty : MetaDataProperty,
+    val metaDataProperty: MetaDataProperty,
     @SerializedName("featureMember")
-    val featureMember : List<FeatureMember>
+    val featureMember: List<FeatureMember>
 )

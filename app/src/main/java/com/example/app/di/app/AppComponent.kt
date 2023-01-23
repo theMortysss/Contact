@@ -11,14 +11,15 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [
-    AppModule::class,
-    RepositoryModule::class,
-    ViewModelFactoryModule::class,
-    RetrofitModule::class,
-    LocationDatabaseModule::class
-    ])
-
+@Component(
+    modules = [
+        AppModule::class,
+        RepositoryModule::class,
+        ViewModelFactoryModule::class,
+        RetrofitModule::class,
+        LocationDatabaseModule::class
+    ]
+)
 interface AppComponent : AppContainer {
 
     override fun plusContactDetailsContainer(): ContactDetailsComponent

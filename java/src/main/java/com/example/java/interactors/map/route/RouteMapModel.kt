@@ -9,6 +9,4 @@ class RouteMapModel(
 
     override suspend fun getLocatedContactList(): List<LocatedContact>? =
         locationRepository.getLocatedContactList()
-
-
 }

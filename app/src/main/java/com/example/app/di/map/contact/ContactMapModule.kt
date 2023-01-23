@@ -1,5 +1,6 @@
 package com.example.app.di.map.contact
 
+import com.example.java.interactors.map.contact.ContactMapInteractor
 import com.example.java.interactors.map.contact.ContactMapModel
 import com.example.java.interfaces.IContactsRepository
 import com.example.java.interfaces.ILocationRepository
@@ -16,7 +17,7 @@ class ContactMapModule {
         locationRepository: ILocationRepository,
         contactRepository: IContactsRepository,
         geocoderRepository: IYandexGeocoderRepository
-    ): com.example.java.interactors.map.contact.ContactMapInteractor =
+    ): ContactMapInteractor =
         ContactMapModel(
             locationRepository,
             contactRepository,

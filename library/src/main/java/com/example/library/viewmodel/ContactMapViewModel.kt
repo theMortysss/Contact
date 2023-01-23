@@ -8,15 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.java.entities.LocatedContact
 import com.example.java.entities.LocationData
 import com.example.java.entities.ShortContact
+import com.example.java.interactors.map.contact.ContactMapInteractor
 import com.example.library.utils.Constants.GEOCODER_API_KEY
 import com.example.library.utils.Constants.TAG
-import com.example.java.interactors.map.contact.ContactMapInteractor
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
 class ContactMapViewModel @Inject constructor(
-    private val interactor : ContactMapInteractor
+    private val interactor: ContactMapInteractor
 ) : ViewModel() {
 
     private val yandexGeocoderApiKey = GEOCODER_API_KEY
@@ -29,11 +29,10 @@ class ContactMapViewModel @Inject constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun getLocatedContactList() : LiveData<List<LocatedContact>> =
+    fun getLocatedContactList(): LiveData<List<LocatedContact>> =
         locatedContactList as LiveData<List<LocatedContact>>
 
-
-    fun getShortContact(contactId: String) : LiveData<ShortContact?> {
+    fun getShortContact(contactId: String): LiveData<ShortContact?> {
         loadShortContact(contactId)
         return shortContact
     }
@@ -73,13 +72,15 @@ class ContactMapViewModel @Inject constructor(
     private fun loadLocatedContactList() {
         Log.d(TAG, "ContactMapViewModel: начинаю запрос координат контактов...")
         viewModelScope.launch {
-            locatedContactList.postValue((interactor.getLocatedContactList() ?: emptyList())
-                    as MutableList<LocatedContact>)
+            locatedContactList.postValue(
+                (interactor.getLocatedContactList() ?: emptyList())
+                    as MutableList<LocatedContact>
+            )
             Log.d(TAG, "ContactMapViewModel: координаты контактов получены.")
         }
     }
 
-    private fun loadShortContact(contactId : String) {
+    private fun loadShortContact(contactId: String) {
         viewModelScope.launch {
             shortContact.postValue(interactor.getShortContactById(contactId))
         }
@@ -89,7 +90,7 @@ class ContactMapViewModel @Inject constructor(
         latitude: Double,
         longitude: Double,
         apikey: String
-        ) {
+    ) {
         viewModelScope.launch {
             try {
                 changedLocationData.value =
@@ -100,8 +101,7 @@ class ContactMapViewModel @Inject constructor(
                             apikey = apikey
                         )
                     )
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 Log.d(TAG, e.stackTraceToString())
                 changedLocationData.value =
                     changedLocationData.value?.copy(
@@ -110,9 +110,4 @@ class ContactMapViewModel @Inject constructor(
             }
         }
     }
-
-
-
-
-
 }

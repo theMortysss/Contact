@@ -17,9 +17,9 @@ class LocationRepository(
     private val contactsRepositoryInterface: IContactsRepository
 ) : ILocationRepository {
 
-    private var locationData : LocationData? = null
+    private var locationData: LocationData? = null
 
-    override suspend fun getLocationData(contactId: String) : LocationData? {
+    override suspend fun getLocationData(contactId: String): LocationData? {
         withContext(Dispatchers.IO) {
             locationData = database.locationDao().getContactLocation(contactId)?.let {
                 LocationData(
@@ -47,12 +47,14 @@ class LocationRepository(
                             longitude = it.longitude,
                             address = it.address
                         )
-                    }
-                    else {
+                    } else {
                         deleteContactLocation(it.id)
-                        Log.d(TAG, "ContactLocationRepository: из БД удален "
-                                + "несуществующий контакт id = ${it.id}"
-                                + " address = ${it.address}")
+                        Log.d(
+                            TAG,
+                            "ContactLocationRepository: из БД удален " +
+                                "несуществующий контакт id = ${it.id}" +
+                                " address = ${it.address}"
+                        )
                         null
                     }
                 }
@@ -68,13 +70,13 @@ class LocationRepository(
     override suspend fun updateContactLocation(locatedContact: LocatedContact) {
         withContext(Dispatchers.IO) {
             database.locationDao().updateContactLocation(
-                    LocationEntity(
-                        id = locatedContact.id,
-                        latitude = locatedContact.latitude,
-                        longitude = locatedContact.longitude,
-                        address = locatedContact.address
-                    )
+                LocationEntity(
+                    id = locatedContact.id,
+                    latitude = locatedContact.latitude,
+                    longitude = locatedContact.longitude,
+                    address = locatedContact.address
                 )
+            )
         }
     }
 
@@ -83,5 +85,4 @@ class LocationRepository(
             database.locationDao().deleteContactLocationById(contactId)
         }
     }
-
 }

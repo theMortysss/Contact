@@ -10,7 +10,7 @@ import com.example.library.room.entity.LocationEntity
 interface LocationDao {
 
     @Insert
-    suspend fun addContactLocation(LocationEntity: LocationEntity)
+    suspend fun addContactLocation(locationEntity: LocationEntity)
 
     @Query("SELECT * FROM marks_location_table WHERE id == :id")
     suspend fun getContactLocation(id: String): LocationEntity?

@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class BoundedBy(
     @SerializedName("Envelope")
-    val envelope : Envelope
+    val envelope: Envelope
 )

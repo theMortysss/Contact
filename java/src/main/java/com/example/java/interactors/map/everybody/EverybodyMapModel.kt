@@ -8,5 +8,4 @@ class EverybodyMapModel(private val locationRepository: ILocationRepository) :
 
     override suspend fun getLocatedContactList(): List<LocatedContact>? =
         locationRepository.getLocatedContactList()
-
 }

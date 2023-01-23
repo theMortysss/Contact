@@ -51,7 +51,6 @@ class ContactDetailsViewModelTest {
                 testViewModel.isBirthdayAlarmOn(iContact)
                 verify(testInteractor).isBirthdayAlarmOn(eq(iContact))
             }
-
         }
     }
 

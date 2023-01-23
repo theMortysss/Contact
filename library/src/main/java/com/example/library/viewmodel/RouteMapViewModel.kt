@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.java.entities.LocatedContact
-import com.example.library.utils.Constants.TAG
 import com.example.java.interactors.map.route.RouteMapInteractor
+import com.example.library.utils.Constants.TAG
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class RouteMapViewModel @Inject constructor(
         loadLocatedContactList()
     }
 
-    fun getLocatedContactList() : LiveData<List<LocatedContact>> = locatedContactList
+    fun getLocatedContactList(): LiveData<List<LocatedContact>> = locatedContactList
 
     private fun loadLocatedContactList() {
         Log.d(TAG, "RouteMapViewModel: начинаю запрос координат контактов...")

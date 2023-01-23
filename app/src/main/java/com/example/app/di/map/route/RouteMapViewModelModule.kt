@@ -8,10 +8,10 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 
 @Module
-abstract class RouteMapViewModelModule {
+interface RouteMapViewModelModule {
 
     @Binds
     @IntoMap
     @ViewModelKey(RouteMapViewModel::class)
-    abstract fun bindRouteMapViewModel(viewModel: RouteMapViewModel) : ViewModel
+    fun bindRouteMapViewModel(viewModel: RouteMapViewModel): ViewModel
 }

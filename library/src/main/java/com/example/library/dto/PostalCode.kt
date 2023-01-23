@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class PostalCode(
     @SerializedName("PostalCodeNumber")
-    val postalCodeNumber : String
+    val postalCodeNumber: String
 )

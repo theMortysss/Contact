@@ -4,11 +4,11 @@ import com.google.gson.annotations.SerializedName
 
 data class GeocoderResponseMetaData(
     @SerializedName("Point")
-    val point : Point,
+    val point: Point,
     @SerializedName("request")
-    val request : String,
+    val request: String,
     @SerializedName("results")
-    val results : String,
+    val results: String,
     @SerializedName("found")
-    val found : String
+    val found: String
 )

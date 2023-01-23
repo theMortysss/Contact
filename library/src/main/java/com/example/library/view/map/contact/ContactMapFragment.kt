@@ -8,12 +8,12 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.library.di.HasAppComponent
-import com.example.library.utils.Constants.TAG
 import com.example.java.entities.LocatedContact
 import com.example.java.entities.LocationData
 import com.example.library.R
 import com.example.library.databinding.FragmentContactMapBinding
+import com.example.library.di.HasAppComponent
+import com.example.library.utils.Constants.TAG
 import com.example.library.utils.injectViewModel
 import com.example.library.view.map.everybody.OnEverybodyMapCallback
 import com.example.library.view.map.route.OnRouteMapCallback
@@ -21,29 +21,40 @@ import com.example.library.viewmodel.ContactMapViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.*
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapLoadedListener
+import com.yandex.mapkit.map.MapObjectCollection
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
-import kotlinx.android.synthetic.main.fragment_contact_map.*
 import javax.inject.Inject
+
+const val IZHEVSK_LATITUDE = 56.851
+const val IZHEVSK_LONGITUDE = 53.214
+const val ZOOM = 12f
+const val DURATION = 5f
+const val AZIMUTH = 0.0f
+const val TILT = 0.0f
+
+private val TARGET_LOCATION = Point(IZHEVSK_LATITUDE, IZHEVSK_LONGITUDE)
 
 class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
 
     @Inject
-    lateinit var viewModelFactory : ViewModelProvider.Factory
-    private lateinit var contactMapViewModel : ContactMapViewModel
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var contactMapViewModel: ContactMapViewModel
     private lateinit var contactId: String
-    private lateinit var mapView : MapView
-    private lateinit var curLocatedContact : LocatedContact
+    private lateinit var mapView: MapView
+    private lateinit var curLocatedContact: LocatedContact
     private lateinit var mapObjects: MapObjectCollection
     private lateinit var placemark: PlacemarkMapObject
 
     private var navigateEverybodyMapCallback: OnEverybodyMapCallback? = null
     private var navigateRouteMapCallback: OnRouteMapCallback? = null
     private var isNewContact = false
-    private val TARGET_LOCATION = Point(56.851, 53.214)
     private var curChangedLocationData: LocationData? = null
-    private var contactMapFrag : FragmentContactMapBinding? = null
+    private var contactMapFrag: FragmentContactMapBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,28 +69,32 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         super.onAttach(context)
         if (context is OnEverybodyMapCallback) {
             navigateEverybodyMapCallback = context
-        } else throw ClassCastException(
-            context.toString() +
+        } else {
+            throw ClassCastException(
+                context.toString() +
                     " must implement OnMapCallback!"
-        )
+            )
+        }
         if (context is OnRouteMapCallback) {
             navigateRouteMapCallback = context
-        } else throw ClassCastException(
-            context.toString() +
+        } else {
+            throw ClassCastException(
+                context.toString() +
                     " must implement OnMapCallback!"
-        )
+            )
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         contactMapFrag = FragmentContactMapBinding.bind(view)
-        mapView = map as MapView
+        mapView = contactMapFrag!!.map as MapView
         mapObjects = mapView.map.mapObjects.addCollection()
         mapView.map.setMapLoadedListener(mapLoadedListener)
         mapView.map.addInputListener(inputListener)
         contactId = arguments?.getString(CONTACT_ID, "") ?: ""
         contactMapViewModel.getLocatedContactList().observe(viewLifecycleOwner) { locatedContactList ->
-             findLocatedContact(locatedContactList)
+            findLocatedContact(locatedContactList)
         }
         contactMapViewModel.getShortContact(contactId).observe(viewLifecycleOwner) { shortContact ->
             if (isNewContact) {
@@ -92,7 +107,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
                         longitude = 0.0,
                         address = ""
                     )
-                    contactMapFrag.apply {
+                    contactMapFrag!!.apply {
                         tv1.text = curLocatedContact.name
                         if (!curLocatedContact.photoUri.isNullOrEmpty()) {
                             iv1.setImageURI(curLocatedContact.photoUri?.toUri())
@@ -129,8 +144,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
             )
             if (isNewContact) {
                 contactMapViewModel.addLocatedContact(curLocatedContact)
-            }
-            else {
+            } else {
                 contactMapViewModel.updateLocatedContact(curLocatedContact)
             }
         }
@@ -140,18 +154,17 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
     }
 
     private fun findLocatedContact(locatedContactList: List<LocatedContact>) {
-        val locatedContact = locatedContactList.firstOrNull {it.id == contactId}
+        val locatedContact = locatedContactList.firstOrNull { it.id == contactId }
         if (locatedContact != null) {
             curLocatedContact = locatedContact
-            contactMapFrag.apply {
+            contactMapFrag!!.apply {
                 tv1.text = curLocatedContact.name
                 if (!curLocatedContact.photoUri.isNullOrEmpty()) {
                     iv1.setImageURI(curLocatedContact.photoUri?.toUri())
                 }
                 addressTv1.text = curLocatedContact.address
             }
-        }
-        else {
+        } else {
             isNewContact = true
             contactMapViewModel.getShortContact(contactId)
         }
@@ -160,10 +173,9 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
     override fun onDestroyView() {
         contactMapFrag = null
         super.onDestroyView()
-
     }
     override fun onStop() {
-        map!!.onStop()
+        contactMapFrag!!.map.onStop()
         MapKitFactory.getInstance().onStop()
 
         super.onStop()
@@ -177,7 +189,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
-        map!!.onStart()
+        contactMapFrag!!.map.onStart()
     }
 
     override fun onDetach() {
@@ -196,20 +208,18 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         if (startLocation == null) {
             if (isNewContact) {
                 startLocation = TARGET_LOCATION
-            }
-            else {
+            } else {
                 startLocation = Point(curLocatedContact.latitude, curLocatedContact.longitude)
-                //if (::placemark.isInitialized) mapObjects.remove(placemark)
+                // if (::placemark.isInitialized) mapObjects.remove(placemark)
                 placemark = mapObjects.addPlacemark(startLocation)
             }
-        }
-        else {
+        } else {
             if (::placemark.isInitialized) mapObjects.remove(placemark)
             placemark = mapObjects.addPlacemark(startLocation)
         }
         mapView.map.move(
-            CameraPosition(TARGET_LOCATION, 12.0f, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 5f),
+            CameraPosition(TARGET_LOCATION, ZOOM, AZIMUTH, TILT),
+            Animation(Animation.Type.SMOOTH, DURATION),
             null
         )
     }
@@ -231,7 +241,6 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         override fun onMapLongTap(p0: Map, point: Point) {
             TODO("Not yet implemented")
         }
-
     }
 
     companion object {

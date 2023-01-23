@@ -18,14 +18,11 @@ class ContactMapModel(
     override suspend fun getLocatedContactList(): List<LocatedContact>? =
         locationRepository.getLocatedContactList()
 
-
     override suspend fun updateContactLocation(locatedContact: LocatedContact) =
         locationRepository.updateContactLocation(locatedContact)
 
-
     override suspend fun addContactLocation(locatedContact: LocatedContact) =
         locationRepository.addContactLocation(locatedContact)
-
 
     override suspend fun reverseGeocoding(
         latitude: Double,
@@ -35,5 +32,6 @@ class ContactMapModel(
         geocoderRepository.reverseGeocoding(
             latitude = latitude,
             longitude = longitude,
-            apikey =  apikey)
+            apikey = apikey
+        )
 }

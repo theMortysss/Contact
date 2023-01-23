@@ -11,11 +11,10 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import java.util.*
 
-
 // Модульное тестирование
 class ContactDetailsModelTest {
 
-    private val birthdayRepository : IBirthdayRepository = mock()
+    private val birthdayRepository: IBirthdayRepository = mock()
 
     private val iContact = Contact(
         id = "1",
@@ -55,18 +54,19 @@ class ContactDetailsModelTest {
     @Test
     fun test1() {
         val testModel = ContactDetailsModel(
-        birthdayRepository = birthdayRepository,
-        locationRepository = mock(),
-        repository = mock(),
-        calendarRepository = mock() {
-            on { now() }.then {
-                Calendar.getInstance().apply {
-                    set(Calendar.DAY_OF_MONTH, 9)
-                    set(Calendar.MONTH, Calendar.SEPTEMBER)
-                    set(Calendar.YEAR, 1999)
+            birthdayRepository = birthdayRepository,
+            locationRepository = mock(),
+            repository = mock(),
+            calendarRepository = mock() {
+                on { now() }.then {
+                    Calendar.getInstance().apply {
+                        set(Calendar.DAY_OF_MONTH, 9)
+                        set(Calendar.MONTH, Calendar.SEPTEMBER)
+                        set(Calendar.YEAR, 1999)
+                    }
                 }
             }
-        })
+        )
         runBlocking {
             testModel.setBirthdayAlarm(iContact)
         }
@@ -74,11 +74,12 @@ class ContactDetailsModelTest {
             curContact = eq(iContact),
             alarmStartMoment = argWhere {
                 it[Calendar.DAY_OF_MONTH] == 8 &&
-                        it[Calendar.MONTH] == Calendar.SEPTEMBER &&
-                        it[Calendar.YEAR] == 2000
+                    it[Calendar.MONTH] == Calendar.SEPTEMBER &&
+                    it[Calendar.YEAR] == 2000
             }
         )
     }
+
 //    Сценарий: успешное добавление напоминания, ДР еще в текущем году не было
 //    Текущий год - 1999(не високосный) 7 сентября
 //    Есть контакт Иван Иванович с датой рождения 8 сентября
@@ -110,11 +111,12 @@ class ContactDetailsModelTest {
             curContact = eq(iContact),
             alarmStartMoment = argWhere {
                 it[Calendar.DAY_OF_MONTH] == 8 &&
-                        it[Calendar.MONTH] == Calendar.SEPTEMBER &&
-                        it[Calendar.YEAR] == 1999
+                    it[Calendar.MONTH] == Calendar.SEPTEMBER &&
+                    it[Calendar.YEAR] == 1999
             }
         )
     }
+
 //    Сценарий: успешное удаление напоминания
 //    Текущий год - 1999(не високосный)
 //    Есть контакт Иван Иванович с датой рождения 8 сентября
@@ -177,8 +179,8 @@ class ContactDetailsModelTest {
             curContact = eq(pContact),
             alarmStartMoment = argWhere {
                 it[Calendar.DAY_OF_MONTH] == 29 &&
-                        it[Calendar.MONTH] == Calendar.FEBRUARY &&
-                        it[Calendar.YEAR] == 2000
+                    it[Calendar.MONTH] == Calendar.FEBRUARY &&
+                    it[Calendar.YEAR] == 2000
             }
         )
     }
@@ -190,7 +192,8 @@ class ContactDetailsModelTest {
 //
 //    Когда пользователь кликает на кнопку напоминания в детальной информации контакта Павел Павлович
 //
-//    Тогда происходит успешное добавление напоминания на 2004 год 29 февраля(т.е. пропускаем 4 года, представим, что бедняги празднуют ДР раз в 4 года)
+//    Тогда происходит успешное добавление напоминания на 2004 год 29 февраля
+//    (т.е. пропускаем 4 года, представим, что бедняги празднуют ДР раз в 4 года)
     @Test
     fun test5() {
         val testModel = ContactDetailsModel(
@@ -214,11 +217,9 @@ class ContactDetailsModelTest {
             curContact = eq(pContact),
             alarmStartMoment = argWhere {
                 it[Calendar.DAY_OF_MONTH] == 29 &&
-                        it[Calendar.MONTH] == Calendar.FEBRUARY &&
-                        it[Calendar.YEAR] == 2004
+                    it[Calendar.MONTH] == Calendar.FEBRUARY &&
+                    it[Calendar.YEAR] == 2004
             }
         )
-
-
     }
 }

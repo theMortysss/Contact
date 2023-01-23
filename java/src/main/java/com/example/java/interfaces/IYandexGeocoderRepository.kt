@@ -6,5 +6,5 @@ interface IYandexGeocoderRepository {
         latitude: Double,
         longitude: Double,
         apikey: String
-    ) : String
+    ): String
 }

@@ -4,5 +4,5 @@ import com.example.java.entities.LocatedContact
 
 interface RouteMapInteractor {
 
-    suspend fun getLocatedContactList() : List<LocatedContact>?
+    suspend fun getLocatedContactList(): List<LocatedContact>?
 }

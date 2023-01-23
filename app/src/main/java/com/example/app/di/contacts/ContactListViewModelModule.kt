@@ -8,10 +8,10 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 
 @Module
-abstract class ContactListViewModelModule {
+interface ContactListViewModelModule {
 
     @Binds
     @IntoMap
     @ViewModelKey(ContactListViewModel::class)
-    abstract fun bindContactListViewModel(viewModel: ContactListViewModel) : ViewModel
+    fun bindContactListViewModel(viewModel: ContactListViewModel): ViewModel
 }

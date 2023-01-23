@@ -1,5 +1,6 @@
 package com.example.app.di.contact
 
+import com.example.java.interactors.contact.ContactDetailsInteractor
 import com.example.java.interactors.contact.ContactDetailsModel
 import com.example.java.interfaces.IBirthdayRepository
 import com.example.java.interfaces.ICalendarRepository
@@ -13,15 +14,15 @@ class ContactDetailsModule {
 
     @Provides
     fun provideContactDetailsInteractor(
-        contactsRepository : IContactsRepository,
+        contactsRepository: IContactsRepository,
         locationRepository: ILocationRepository,
         birthdayRepository: IBirthdayRepository,
         calendarRepository: ICalendarRepository
-    ) : com.example.java.interactors.contact.ContactDetailsInteractor
-        = ContactDetailsModel(
-        contactsRepository,
-        locationRepository,
-        birthdayRepository,
-        calendarRepository
-    )
+    ): ContactDetailsInteractor =
+        ContactDetailsModel(
+            contactsRepository,
+            locationRepository,
+            birthdayRepository,
+            calendarRepository
+        )
 }

@@ -5,3 +5,4 @@ data class LocationData(
     val longitude: Double,
     val address: String
 )
+

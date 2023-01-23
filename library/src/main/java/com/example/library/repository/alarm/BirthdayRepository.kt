@@ -8,11 +8,11 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import com.example.java.entities.Contact
-import com.example.library.utils.Constants.TAG
 import com.example.java.interfaces.IBirthdayRepository
 import com.example.library.receiver.BirthdayReceiver
 import com.example.library.utils.Constants.BIRTHDAY_MESSAGE
 import com.example.library.utils.Constants.CONTACT_ID
+import com.example.library.utils.Constants.TAG
 import java.util.*
 import javax.inject.Inject
 
@@ -85,5 +85,4 @@ class BirthdayRepository @Inject constructor(
     }
 
     private fun isLeapYear(date: Calendar) = date[Calendar.YEAR] % LEAP_YEAR_PERIOD == 0
-
 }

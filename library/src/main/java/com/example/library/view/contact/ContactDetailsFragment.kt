@@ -11,15 +11,14 @@ import androidx.lifecycle.lifecycleScope
 import com.example.java.entities.Contact
 import com.example.java.entities.LocationData
 import com.example.library.R
+import com.example.library.databinding.FragmentContactDetailsBinding
 import com.example.library.di.HasAppComponent
 import com.example.library.utils.Constants.TAG
-import com.example.library.databinding.FragmentContactDetailsBinding
 import com.example.library.utils.injectViewModel
 import com.example.library.view.map.contact.OnContactMapCallback
 import com.example.library.viewmodel.ContactDetailsViewModel
 import java.util.*
 import javax.inject.Inject
-
 
 class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
 
@@ -39,10 +38,12 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
         super.onAttach(context)
         if (context is OnContactMapCallback) {
             navigateMapCallback = context
-        } else throw ClassCastException(
-            context.toString() +
+        } else {
+            throw ClassCastException(
+                context.toString() +
                     " must implement OnMapCallback!"
-        )
+            )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,11 +70,13 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
                     try {
                         showContactData(curContact[0])
                         detailsFrag?.birthdayButton?.setOnCheckedChangeListener { _, isChecked ->
-                            if (isChecked) contactDetailsViewModel.setBirthdayAlarm(curContact[0])
-                            else contactDetailsViewModel.cancelBirthdayAlarm(curContact[0])
+                            if (isChecked) {
+                                contactDetailsViewModel.setBirthdayAlarm(curContact[0])
+                            } else {
+                                contactDetailsViewModel.cancelBirthdayAlarm(curContact[0])
+                            }
                         }
-                    }
-                    catch (e: IllegalStateException) {
+                    } catch (e: IllegalStateException) {
                         Log.d(TAG, "Исключение в ContactDetailsFragment: ")
                         Log.d(TAG, e.stackTraceToString())
                     }
@@ -85,7 +88,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
         }
     }
 
-    private fun showLocationData(curLocation : LocationData?) {
+    private fun showLocationData(curLocation: LocationData?) {
         if (curLocation != null) {
             with(curLocation) {
                 detailsFrag?.apply {
@@ -108,17 +111,21 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
                     phoneTV.text = curContact.phone
                     emailTV.text = curContact.email
                     descriptionTV.text = curContact.description
-                    birthdayTV.text = if (birthday != null)
+                    birthdayTV.text = if (birthday != null) {
                         birthday!!.get(Calendar.DAY_OF_MONTH).toString() + " " +
-                                birthday!!.getDisplayName(
-                                    Calendar.MONTH,
-                                    Calendar.LONG,
-                                    Locale.getDefault()
-                                )
-                    else "День рождения пока не задан"
+                            birthday!!.getDisplayName(
+                                Calendar.MONTH,
+                                Calendar.LONG,
+                                Locale.getDefault()
+                            )
+                    } else {
+                        "День рождения пока не задан"
+                    }
                     birthdayButton.isChecked = if (birthday != null) {
                         contactDetailsViewModel.isBirthdayAlarmOn(curContact)
-                    } else false
+                    } else {
+                        false
+                    }
 //                    birthdayButton.visibility = if (birthday != null) View.VISIBLE else View.GONE
                     if (!curContact.avatarUri.isNullOrEmpty()) {
                         avatarIV.setImageURI(curContact.avatarUri!!.toUri())
@@ -160,6 +167,3 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
             }
     }
 }
-
-
-

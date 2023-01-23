@@ -24,6 +24,4 @@ class RetrofitModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(YandexGeocoderApi::class.java)
-
-
 }

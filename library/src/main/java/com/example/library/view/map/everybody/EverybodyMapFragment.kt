@@ -6,16 +6,15 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.library.di.HasAppComponent
-import com.example.library.utils.Constants.EMPTY_VALUE
 import com.example.java.entities.LocatedContact
 import com.example.library.R
 import com.example.library.databinding.FragmentEverybodyMapBinding
+import com.example.library.di.HasAppComponent
+import com.example.library.utils.Constants.EMPTY_VALUE
 import com.example.library.utils.injectViewModel
 import com.example.library.viewmodel.EverybodyMapViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapLoadedListener
@@ -23,27 +22,30 @@ import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
-import kotlinx.android.synthetic.main.fragment_everybody_map.map
 import javax.inject.Inject
 
+const val IZHEVSK_LATITUDE = 56.851
+const val IZHEVSK_LONGITUDE = 53.214
+const val ZOOM = 12f
+const val DURATION = 5f
+const val AZIMUTH = 0.0f
+const val TILT = 0.0f
+
+private val TARGET_LOCATION = Point(IZHEVSK_LATITUDE, IZHEVSK_LONGITUDE)
 
 class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
 
-    private var everybodyMapFrag : FragmentEverybodyMapBinding? = null
+    private var everybodyMapFrag: FragmentEverybodyMapBinding? = null
 
     @Inject
-    lateinit var viewModelFactory : ViewModelProvider.Factory
-    private lateinit var everybodyMapViewModel : EverybodyMapViewModel
-    private lateinit var locatedContactList : List<LocatedContact>
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var everybodyMapViewModel: EverybodyMapViewModel
+    private lateinit var locatedContactList: List<LocatedContact>
     private lateinit var curLocatedContact: LocatedContact
-    private lateinit var curContactId : String
-    private lateinit var mapView : MapView
+    private lateinit var curContactId: String
+    private lateinit var mapView: MapView
     private lateinit var mapObjects: MapObjectCollection
     private lateinit var placemark: PlacemarkMapObject
-
-    private lateinit var boundingBox : BoundingBox
-
-    private val TARGET_LOCATION = Point(56.851, 53.214)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +59,7 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         everybodyMapFrag = FragmentEverybodyMapBinding.bind(view)
-        mapView = map as MapView
+        mapView = everybodyMapFrag!!.map as MapView
         mapObjects = mapView.map.mapObjects.addCollection()
         mapView.map.setMapLoadedListener(mapLoadedListener)
         mapObjects.addTapListener(mapObjectTapListener)
@@ -89,7 +91,7 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
                         Toast.LENGTH_LONG
                     ).show()
                 }
-        }
+            }
     }
 
     private fun showLocatedContact(curLocatedContact: LocatedContact) {
@@ -113,8 +115,8 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
                     showLocatedContact(curLocatedContact)
                     curContactId = curLocatedContact.id
                     mapView.map.move(
-                        CameraPosition(point, 12.0f, 0.0f, 0.0f),
-                        Animation(Animation.Type.SMOOTH, 0.5f),
+                        CameraPosition(point, ZOOM, AZIMUTH, TILT),
+                        Animation(Animation.Type.SMOOTH, DURATION),
                         null
                     )
                 }
@@ -140,24 +142,14 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
         }
 
         mapView.map.move(
-            CameraPosition(TARGET_LOCATION, 12.0f, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 5f),
+            CameraPosition(TARGET_LOCATION, ZOOM, AZIMUTH, TILT),
+            Animation(Animation.Type.SMOOTH, DURATION),
             null
         )
-
-
-
-//        val boundingBox = BoundingBox(
-//            Point(p1.latitude, p1.longitude),
-//            Point(p2.latitude, p2.longitude)) // getting BoundingBox between two points
-//        boundingBox = BoundingBox(Point(36.052184, 55.655396), Point(65.998784, 71.748572))
-//        var cameraPosition = mapView.map.cameraPosition(boundingBox) // getting cameraPosition
-//        cameraPosition = CameraPosition(cameraPosition.target, 12.0f, 0.0f, 0.0f) // Zoom 80%
-//        mapView.map.move(cameraPosition, Animation(Animation.Type.SMOOTH, 0f), null) // move camera
     }
 
     override fun onStop() {
-        map!!.onStop()
+        everybodyMapFrag!!.map.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
     }
@@ -165,9 +157,8 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
-        map!!.onStart()
+        everybodyMapFrag!!.map.onStart()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

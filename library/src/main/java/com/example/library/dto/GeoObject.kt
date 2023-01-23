@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName
 
 data class GeoObject(
     @SerializedName("metaDataProperty")
-    val metaDataProperty : MetaDataPropertyGO,
+    val metaDataProperty: MetaDataPropertyGO,
     @SerializedName("name")
-    val name : String,
+    val name: String,
     @SerializedName("description")
-    val description : String,
+    val description: String,
     @SerializedName("boundedBy")
-    val boundedBy : BoundedBy,
+    val boundedBy: BoundedBy,
     @SerializedName("Point")
-    val point : PointGO
+    val point: PointGO
 )

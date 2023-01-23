@@ -7,7 +7,7 @@ import java.util.*
 interface ContactDetailsInteractor {
     suspend fun getContactDetails(contactId: String): List<Contact>
 
-    suspend fun getLocationData(contactId: String) : LocationData?
+    suspend fun getLocationData(contactId: String): LocationData?
 
     suspend fun deleteLocationData(contactId: String)
 
