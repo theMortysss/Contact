@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_application"
+    app:startDestination="@id/helloFragment">
+
+    <fragment
+        android:id="@+id/helloFragment"
+        android:name="com.example.library.HelloFragment"
+        android:label="HelloFragment" >
+        <action
+            android:id="@+id/action_helloFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/nav_graph_application"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_helloFragment_to_contactDetailsFragment2"
+            app:destination="@id/contactDetailsFragment2"
+            app:popUpTo="@id/nav_graph_application"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.library.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" />
+    <fragment
+        android:id="@+id/contactDetailsFragment2"
+        android:name="com.example.library.view.contact.ContactDetailsFragment"
+        android:label="ContactDetailsFragment" />
+</navigation>

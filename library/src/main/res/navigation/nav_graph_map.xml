@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_map"
+    app:startDestination="@id/everybodyMapFragment3">
+
+    <fragment
+        android:id="@+id/routeMapFragment"
+        android:name="com.example.library.view.map.route.RouteMapFragment"
+        android:label="RouteMapFragment" >
+        <action
+            android:id="@+id/action_routeMapFragment_to_contactDialogFragment"
+            app:destination="@id/contactDialogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/everybodyMapFragment3"
+        android:name="com.example.library.view.map.everybody.EverybodyMapFragment"
+        android:label="EverybodyMapFragment" />
+    <dialog
+        android:id="@+id/contactDialogFragment"
+        android:name="com.example.library.view.map.ContactDialogFragment"
+        android:label="ContactDialogFragment" />
+</navigation>
