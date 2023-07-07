@@ -39,6 +39,11 @@ android {
 dependencies {
     implementation project(':java')
 
+    // Navigation
+    def nav_version = "2.6.0"
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+
     // Yandex MapKit
     def yandex_mapkit_version = "4.2.2-full"
     implementation "com.yandex.android:maps.mobile:$yandex_mapkit_version"

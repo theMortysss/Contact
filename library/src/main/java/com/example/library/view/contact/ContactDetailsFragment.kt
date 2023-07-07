@@ -1,13 +1,14 @@
 package com.example.library.view.contact
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.java.entities.Contact
 import com.example.java.entities.LocationData
 import com.example.library.R
@@ -15,7 +16,7 @@ import com.example.library.databinding.FragmentContactDetailsBinding
 import com.example.library.di.HasAppComponent
 import com.example.library.utils.Constants.TAG
 import com.example.library.utils.injectViewModel
-import com.example.library.view.map.contact.OnContactMapCallback
+import com.example.library.view.map.contact.ContactMapFragment
 import com.example.library.viewmodel.ContactDetailsViewModel
 import java.util.*
 import javax.inject.Inject
@@ -28,22 +29,8 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var contactDetailsViewModel: ContactDetailsViewModel
 
-    private var navigateMapCallback: OnContactMapCallback? = null
-
     private val contactId: String by lazy {
         requireArguments().getString(CONTACT_ID, "")
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnContactMapCallback) {
-            navigateMapCallback = context
-        } else {
-            throw ClassCastException(
-                context.toString() +
-                    " must implement OnMapCallback!"
-            )
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +47,10 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
         detailsFrag = FragmentContactDetailsBinding.bind(view)
 
         detailsFrag?.toContactMapFragmentFab?.setOnClickListener {
-            navigateMapCallback?.navigateToContactMapFragment(contactId)
+            findNavController().navigate(
+                R.id.action_contactDetailsFragment_to_contactMapFragment,
+                bundleOf(ContactMapFragment.CONTACT_ID to contactId)
+            )
         }
         detailsFrag?.deleteLocationDataFab?.setOnClickListener(deleteLocationDataFabListener)
 
@@ -142,11 +132,6 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
         super.onDestroyView()
     }
 
-    override fun onDetach() {
-        navigateMapCallback = null
-        super.onDetach()
-    }
-
     private val deleteLocationDataFabListener = View.OnClickListener {
         detailsFrag?.deleteLocationDataFab?.visibility = View.GONE
         contactDetailsViewModel.deleteLocationData(contactId)
@@ -155,7 +140,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
 
     companion object {
 
-        private const val CONTACT_ID = "id"
+        const val CONTACT_ID = "id"
         val FRAGMENT_NAME: String = ContactDetailsFragment::class.java.name
 
         @JvmStatic

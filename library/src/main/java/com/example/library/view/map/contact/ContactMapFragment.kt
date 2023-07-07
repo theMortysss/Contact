@@ -1,6 +1,5 @@
 package com.example.library.view.map.contact
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,8 +14,6 @@ import com.example.library.databinding.FragmentContactMapBinding
 import com.example.library.di.HasAppComponent
 import com.example.library.utils.Constants.TAG
 import com.example.library.utils.injectViewModel
-import com.example.library.view.map.everybody.OnEverybodyMapCallback
-import com.example.library.view.map.route.OnRouteMapCallback
 import com.example.library.viewmodel.ContactMapViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -50,8 +47,6 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
     private lateinit var mapObjects: MapObjectCollection
     private lateinit var placemark: PlacemarkMapObject
 
-    private var navigateEverybodyMapCallback: OnEverybodyMapCallback? = null
-    private var navigateRouteMapCallback: OnRouteMapCallback? = null
     private var isNewContact = false
     private var curChangedLocationData: LocationData? = null
     private var contactMapFrag: FragmentContactMapBinding? = null
@@ -63,26 +58,6 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
             ?.plusContactMapContainer()
             ?.inject(this)
         contactMapViewModel = injectViewModel(viewModelFactory)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnEverybodyMapCallback) {
-            navigateEverybodyMapCallback = context
-        } else {
-            throw ClassCastException(
-                context.toString() +
-                    " must implement OnMapCallback!"
-            )
-        }
-        if (context is OnRouteMapCallback) {
-            navigateRouteMapCallback = context
-        } else {
-            throw ClassCastException(
-                context.toString() +
-                    " must implement OnMapCallback!"
-            )
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -126,12 +101,6 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
             }
         }
         contactMapFrag?.saveFab?.setOnClickListener { saveChangedLocationData() }
-        contactMapFrag?.toEverybodyMapFragmentFab?.setOnClickListener {
-            navigateEverybodyMapCallback?.navigateToEverybodyMapFragment(contactId)
-        }
-        contactMapFrag?.toRouteMapFragmentFab?.setOnClickListener {
-            navigateRouteMapCallback?.navigateToRouteMapFragment(contactId)
-        }
     }
 
     private fun saveChangedLocationData() {
@@ -192,12 +161,6 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         contactMapFrag!!.map.onStart()
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        navigateRouteMapCallback = null
-        navigateEverybodyMapCallback = null
-    }
-
     private val mapLoadedListener = MapLoadedListener {
         var startLocation = curChangedLocationData?.let {
             Point(
@@ -244,7 +207,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
     }
 
     companion object {
-        private const val CONTACT_ID = "id"
+        const val CONTACT_ID = "id"
         val FRAGMENT_NAME: String = ContactMapFragment::class.java.name
 
         @JvmStatic

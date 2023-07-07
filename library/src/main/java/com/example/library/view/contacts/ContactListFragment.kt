@@ -1,21 +1,21 @@
 package com.example.library.view.contacts
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.library.R
 import com.example.library.databinding.FragmentContactsListBinding
 import com.example.library.di.HasAppComponent
-import com.example.library.utils.Constants.EMPTY_VALUE
 import com.example.library.utils.Constants.TAG
 import com.example.library.utils.injectViewModel
-import com.example.library.view.map.everybody.OnEverybodyMapCallback
+import com.example.library.view.contact.ContactDetailsFragment
 import com.example.library.viewmodel.ContactListViewModel
 import javax.inject.Inject
 
@@ -25,8 +25,6 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var contactListViewModel: ContactListViewModel
 
-    private var navigateEverybodyMapCallback: OnEverybodyMapCallback? = null
-    private var navigateCallback: OnContactListCallback? = null
     private var listFrag: FragmentContactsListBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,35 +36,15 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
         contactListViewModel = injectViewModel(viewModelFactory)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnContactListCallback) {
-            navigateCallback = context
-        } else {
-            throw ClassCastException(
-                context.toString() +
-                    " must implement ContactListCallback!"
-            )
-        }
-        if (context is OnEverybodyMapCallback) {
-            navigateEverybodyMapCallback = context
-        } else {
-            throw ClassCastException(
-                context.toString() +
-                    " must implement MapCallback!"
-            )
-        }
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         listFrag = FragmentContactsListBinding.bind(view)
 
-        listFrag?.toEverybodyMapFragmentFab?.setOnClickListener {
-            navigateEverybodyMapCallback?.navigateToEverybodyMapFragment(EMPTY_VALUE)
-        }
-
         val contactListAdapter = ContactListAdapter { contactId ->
-            navigateCallback?.navigateToContactDetailsFragment(contactId)
+            findNavController().navigate(
+                R.id.action_contactListFragment_to_contactDetailsFragment,
+                bundleOf(ContactDetailsFragment.CONTACT_ID to contactId)
+            )
         }
 
         listFrag?.recyclerView?.apply {
@@ -118,11 +96,6 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
         super.onDestroyView()
     }
 
-    override fun onDetach() {
-        navigateCallback = null
-        navigateEverybodyMapCallback = null
-        super.onDetach()
-    }
     companion object {
         const val EMPTY_QUERY = ""
     }

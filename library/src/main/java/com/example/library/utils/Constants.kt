@@ -1,6 +1,5 @@
 package com.example.library.utils
 
-
 import android.net.Uri
 
 object Constants {

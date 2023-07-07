@@ -2,33 +2,18 @@ package com.example.library
 
 import android.Manifest
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.library.utils.Constants.CONTACT_ID
 import com.example.library.utils.Constants.MAPKIT_API_KEY
 import com.example.library.utils.PermissionsAccessHelper.isPermissionsRequestSuccessful
 import com.example.library.utils.PermissionsAccessHelper.startPermissionsRequest
-import com.example.library.view.contact.ContactDetailsFragment
-import com.example.library.view.contacts.ContactListFragment
-import com.example.library.view.contacts.OnContactListCallback
-import com.example.library.view.map.contact.ContactMapFragment
-import com.example.library.view.map.contact.OnContactMapCallback
-import com.example.library.view.map.everybody.EverybodyMapFragment
-import com.example.library.view.map.everybody.OnEverybodyMapCallback
-import com.example.library.view.map.route.OnRouteMapCallback
-import com.example.library.view.map.route.RouteMapFragment
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.transport.TransportFactory
 
 // Значение интента при старте активити по ярлыку на экране
 private const val LAUNCHER_START_INTENT = "android.intent.action.MAIN"
 
-class MainActivity :
-    AppCompatActivity(),
-    OnContactListCallback,
-    OnContactMapCallback,
-    OnEverybodyMapCallback,
-    OnRouteMapCallback {
+class MainActivity : AppCompatActivity() {
 
     private val askPermissions = arrayOf(
         Manifest.permission.READ_CONTACTS
@@ -71,68 +56,12 @@ class MainActivity :
 
     private fun chooseNavigation() {
         if (!activityStartedByNotification) {
-            navigateToContactListFragment()
+            // navigateToContactListFragment()
         } else {
             val contactId = curIntent.getStringExtra(CONTACT_ID)
-            Log.d(com.example.library.utils.Constants.TAG, "MainActivity: contactId = $contactId")
             if (!contactId.isNullOrEmpty()) {
-                navigateToContactDetailsFragment(contactId)
+                // navigateToContactDetailsFragment(contactId)
             }
         }
-    }
-
-    private fun navigateToContactListFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.frag_container,
-                ContactListFragment()
-            )
-            .commit()
-    }
-
-    override fun navigateToContactDetailsFragment(contactId: String) {
-        val transaction = supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.frag_container,
-                ContactDetailsFragment.newInstance(contactId),
-                ContactDetailsFragment.FRAGMENT_NAME
-            )
-        if (!activityStartedByNotification) {
-            transaction.addToBackStack(ContactDetailsFragment.FRAGMENT_NAME)
-        }
-        transaction.commit()
-    }
-
-    override fun navigateToContactMapFragment(contactId: String) {
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.frag_container,
-                ContactMapFragment.newInstance(contactId),
-                ContactMapFragment.FRAGMENT_NAME
-            )
-            .addToBackStack(ContactMapFragment.FRAGMENT_NAME)
-            .commit()
-    }
-
-    override fun navigateToEverybodyMapFragment(contactId: String) {
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.frag_container,
-                EverybodyMapFragment.newInstance(contactId),
-                EverybodyMapFragment.FRAGMENT_NAME
-            )
-            .addToBackStack(EverybodyMapFragment.FRAGMENT_NAME)
-            .commit()
-    }
-
-    override fun navigateToRouteMapFragment(contactId: String) {
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.frag_container,
-                RouteMapFragment.newInstance(contactId),
-                RouteMapFragment.FRAGMENT_NAME
-            )
-            .addToBackStack(RouteMapFragment.FRAGMENT_NAME)
-            .commit()
     }
 }

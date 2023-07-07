@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">library</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mainTitleContact">Контакты</string>
+    <string name="mainTitleMap">Карта</string>
+    <string name="titleEverybodyMap">Все</string>
+    <string name="titleContactMap">Контакт</string>
+    <string name="titleRouteMap">Путь</string>
+    <string name="hello_fragment">Привет!</string>
 </resources>
