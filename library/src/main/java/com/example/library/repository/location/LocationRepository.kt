@@ -8,7 +8,7 @@ import com.example.java.interfaces.ILocationRepository
 import com.example.library.room.database.LocationDatabase
 import com.example.library.room.entity.LocationEntity
 import com.example.library.room.entity.toDatabase
-import com.example.library.utils.Constants.TAG
+import com.example.library.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -18,6 +18,7 @@ class LocationRepository(
 ) : ILocationRepository {
 
     private var locationData: LocationData? = null
+    private var locatedContactList: List<LocatedContact>? = null
 
     override suspend fun getLocationData(contactId: String): LocationData? {
         withContext(Dispatchers.IO) {
@@ -34,7 +35,7 @@ class LocationRepository(
 
     override suspend fun getLocatedContactList(): List<LocatedContact>? =
         withContext(Dispatchers.IO) {
-            database.locationDao().getAllContactLocations()?.mapNotNull {
+            locatedContactList = database.locationDao().getAllContactLocations()?.mapNotNull {
                 withContext(Dispatchers.IO) {
                     val contact =
                         contactsRepositoryInterface.getShortContact(it.id)
@@ -50,7 +51,7 @@ class LocationRepository(
                     } else {
                         deleteContactLocation(it.id)
                         Log.d(
-                            TAG,
+                            Constants.TAG,
                             "ContactLocationRepository: из БД удален " +
                                 "несуществующий контакт id = ${it.id}" +
                                 " address = ${it.address}"
@@ -59,6 +60,7 @@ class LocationRepository(
                     }
                 }
             }
+            return@withContext locatedContactList
         }
 
     override suspend fun addContactLocation(locatedContact: LocatedContact) {

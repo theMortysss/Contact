@@ -9,6 +9,7 @@ import dagger.Provides
 @Module
 class ContactListModule {
     @Provides
-    fun provideContactListInteractor(repository: IContactsRepository): ContactListInteractor =
-        ContactListModel(repository)
+    fun provideContactListInteractor(
+        repository: IContactsRepository
+    ): ContactListInteractor = ContactListModel(repository)
 }

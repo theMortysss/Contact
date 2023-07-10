@@ -25,7 +25,7 @@ class ContactDialogFragment : DialogFragment() {
         )
 
         return AlertDialog.Builder(requireContext())
-            .setTitle("Выберите второй контакт")
+            .setTitle("Выберите контакт")
             .setAdapter(contactListAdapter) { _, i ->
                 setFragmentResult(
                     DIALOG_REQUEST,

@@ -52,7 +52,7 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
             layoutManager = LinearLayoutManager(context)
             itemAnimator = null
         }
-        contactListViewModel.loadContactList(EMPTY_QUERY)
+        contactListViewModel.getLocatedContactList(EMPTY_QUERY)
             .observe(viewLifecycleOwner) { contactList ->
                 if (!contactList.isNullOrEmpty()) {
                     Log.d(TAG, "ContactListFragment обзервер сработал")
@@ -88,7 +88,7 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
     }
 
     private fun searchContacts(query: String) {
-        contactListViewModel.loadContactList(query)
+        contactListViewModel.getLocatedContactList(query)
     }
 
     override fun onDestroyView() {

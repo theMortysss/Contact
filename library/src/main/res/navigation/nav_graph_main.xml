@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/contactListFragment"
         android:name="com.example.library.view.contacts.ContactListFragment"
-        android:label="ContactListFragment" >
+        android:label="ContactListFragment">
         <action
             android:id="@+id/action_contactListFragment_to_contactDetailsFragment"
             app:destination="@id/contactDetailsFragment" />
@@ -15,7 +15,7 @@
     <fragment
         android:id="@+id/contactDetailsFragment"
         android:name="com.example.library.view.contact.ContactDetailsFragment"
-        android:label="ContactDetailsFragment" >
+        android:label="ContactDetailsFragment">
         <action
             android:id="@+id/action_contactDetailsFragment_to_contactMapFragment"
             app:destination="@id/contactMapFragment" />
