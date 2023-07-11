@@ -52,6 +52,9 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
                 bundleOf(ContactMapFragment.CONTACT_ID to contactId)
             )
         }
+        detailsFrag?.topAppBar?.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
         detailsFrag?.deleteLocationDataFab?.setOnClickListener(deleteLocationDataFabListener)
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -120,7 +123,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
                     if (!curContact.avatarUri.isNullOrEmpty()) {
                         avatarIV.setImageURI(curContact.avatarUri!!.toUri())
                     } else {
-                        avatarIV.setImageResource(R.mipmap.ic_launcher_round)
+                        avatarIV.setImageResource(R.mipmap.profile)
                     }
                 }
             }

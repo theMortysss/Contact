@@ -33,15 +33,15 @@ class ContactListAdapter(
     ) : RecyclerView.ViewHolder(contactRow.root) {
 
         fun bind(item: ShortContact) = with(contactRow) {
-            nameTV.text = item.name
-            phoneTV.text = item.phone
+            personName.text = item.name
+            phoneNumber.text = item.phone
             if (!item.photoUri.isNullOrEmpty()) {
-                photoIV.setImageURI(item.photoUri!!.toUri())
+                avatar.setImageURI(item.photoUri!!.toUri())
             } else {
-                photoIV.setImageResource(R.mipmap.ic_launcher_round)
+                avatar.setImageResource(R.mipmap.profile)
             }
             itemView.setOnClickListener {
-                //absoluteAdapterPosition
+                // absoluteAdapterPosition
                 if (adapterPosition != RecyclerView.NO_POSITION) navigateTo(item.id)
             }
         }
@@ -56,4 +56,3 @@ class ContactListAdapter(
             oldItem.name == newItem.name && oldItem.phone == newItem.phone
     }
 }
-

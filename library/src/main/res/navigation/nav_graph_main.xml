@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_main"
     app:startDestination="@id/contactListFragment">
 
     <fragment
         android:id="@+id/contactListFragment"
         android:name="com.example.library.view.contacts.ContactListFragment"
-        android:label="ContactListFragment" >
+        android:label="ContactListFragment">
         <action
             android:id="@+id/action_contactListFragment_to_contactDetailsFragment"
             app:destination="@id/contactDetailsFragment" />
+        <action
+            android:id="@+id/action_contactListFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/contactDetailsFragment"
         android:name="com.example.library.view.contact.ContactDetailsFragment"
-        android:label="ContactDetailsFragment" >
+        android:label="ContactDetailsFragment">
         <action
             android:id="@+id/action_contactDetailsFragment_to_contactMapFragment"
             app:destination="@id/contactMapFragment" />
@@ -28,4 +32,9 @@
         android:id="@+id/contactMapFragment"
         android:name="com.example.library.view.map.contact.ContactMapFragment"
         android:label="ContactMapFragment" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.library.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

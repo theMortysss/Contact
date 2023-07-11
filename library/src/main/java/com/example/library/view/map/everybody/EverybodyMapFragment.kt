@@ -1,6 +1,7 @@
 package com.example.library.view.map.everybody
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.net.toUri
@@ -10,7 +11,7 @@ import com.example.java.entities.LocatedContact
 import com.example.library.R
 import com.example.library.databinding.FragmentEverybodyMapBinding
 import com.example.library.di.HasAppComponent
-import com.example.library.utils.Constants.EMPTY_VALUE
+import com.example.library.utils.Constants.TAG
 import com.example.library.utils.injectViewModel
 import com.example.library.viewmodel.EverybodyMapViewModel
 import com.yandex.mapkit.Animation
@@ -27,7 +28,7 @@ import javax.inject.Inject
 const val IZHEVSK_LATITUDE = 56.851
 const val IZHEVSK_LONGITUDE = 53.214
 const val ZOOM = 12f
-const val DURATION = 5f
+const val DURATION = 1f
 const val AZIMUTH = 0.0f
 const val TILT = 0.0f
 
@@ -45,7 +46,7 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
     private lateinit var curContactId: String
     private lateinit var mapView: MapView
     private lateinit var mapObjects: MapObjectCollection
-    private lateinit var placemark: PlacemarkMapObject
+    // private lateinit var placemark: PlacemarkMapObject
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,32 +59,25 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         everybodyMapFrag = FragmentEverybodyMapBinding.bind(view)
         mapView = everybodyMapFrag!!.map as MapView
         mapObjects = mapView.map.mapObjects.addCollection()
         mapView.map.setMapLoadedListener(mapLoadedListener)
         mapObjects.addTapListener(mapObjectTapListener)
 
-        curContactId = arguments?.getString(CONTACT_ID, "") ?: ""
+        // curContactId = arguments?.getString(CONTACT_ID, "") ?: ""
+
+        everybodyMapFrag?.apply {
+            tv1.text = "Пользователь не выбран"
+            addressTv1.text = ""
+        }
 
         everybodyMapViewModel.getLocatedContactList()
             .observe(viewLifecycleOwner) { list ->
-                locatedContactList = list
-                if (locatedContactList.isNotEmpty()) {
-                    if (curContactId != EMPTY_VALUE) {
-                        curLocatedContact = locatedContactList
-                            .firstOrNull { it.id == curContactId } ?: locatedContactList[0]
-                        curContactId = curLocatedContact.id
-                        showLocatedContact(curLocatedContact)
-                    } else {
-                        curLocatedContact = locatedContactList
-                            .firstOrNull { it.id == curContactId } ?: locatedContactList[0]
-                        curContactId = curLocatedContact.id
-                        everybodyMapFrag?.apply {
-                            tv1.text = "Пользователь не выбран"
-                            addressTv1.text = ""
-                        }
-                    }
+                if (!list.isNullOrEmpty()) {
+                    locatedContactList = list
+                    Log.d(TAG, "EverybodyMapFragment обзервер сработал")
                 } else {
                     Toast.makeText(
                         context,
@@ -109,41 +103,31 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
     private val mapObjectTapListener =
         MapObjectTapListener { mapObject, point ->
             if (mapObject is PlacemarkMapObject) {
-                if (mapObject != placemark) {
-                    placemark = mapObject
-                    curLocatedContact = locatedContactList.first { it.id == placemark.userData }
-                    showLocatedContact(curLocatedContact)
-                    curContactId = curLocatedContact.id
-                    mapView.map.move(
-                        CameraPosition(point, ZOOM, AZIMUTH, TILT),
-                        Animation(Animation.Type.SMOOTH, DURATION),
-                        null
-                    )
-                }
+//                if (mapObject != placemark) {
+//                    placemark = mapObject
+                curLocatedContact = locatedContactList.first { it.id == mapObject.userData }
+                showLocatedContact(curLocatedContact)
+                curContactId = curLocatedContact.id
+                mapView.map.move(
+                    CameraPosition(point, ZOOM, AZIMUTH, TILT),
+                    Animation(Animation.Type.SMOOTH, DURATION),
+                    null
+                )
+//                }
             }
             true
         }
 
     private val mapLoadedListener = MapLoadedListener {
-        if (::curLocatedContact.isInitialized) {
-            val curLocation = Point(curLocatedContact.latitude, curLocatedContact.longitude)
-            if (::placemark.isInitialized) mapObjects.remove(placemark)
-            placemark = mapObjects.addPlacemark(curLocation).apply {
-                userData = curLocatedContact.id
-            }
-
-            locatedContactList.forEach {
-                if (it.id != curLocatedContact.id) {
-                    mapObjects.addPlacemark(Point(it.latitude, it.longitude)).apply {
-                        userData = it.id
-                    }
-                }
+        locatedContactList.forEach {
+            mapObjects.addPlacemark(Point(it.latitude, it.longitude)).apply {
+                userData = it.id
             }
         }
 
         mapView.map.move(
             CameraPosition(TARGET_LOCATION, ZOOM, AZIMUTH, TILT),
-            Animation(Animation.Type.SMOOTH, DURATION),
+            Animation(Animation.Type.LINEAR, DURATION),
             null
         )
     }
@@ -155,9 +139,9 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
     }
 
     override fun onStart() {
-        super.onStart()
         MapKitFactory.getInstance().onStart()
         everybodyMapFrag!!.map.onStart()
+        super.onStart()
     }
 
     override fun onDestroyView() {

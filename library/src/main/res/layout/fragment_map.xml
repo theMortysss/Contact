@@ -23,5 +23,6 @@
         android:layout_height="wrap_content"
         app:menu="@menu/menu_bottom_map"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/mapContainerView"/>
+        app:layout_constraintBottom_toTopOf="@+id/mapContainerView"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

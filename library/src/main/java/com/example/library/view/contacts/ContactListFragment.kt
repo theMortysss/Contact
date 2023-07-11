@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -52,7 +52,7 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
             layoutManager = LinearLayoutManager(context)
             itemAnimator = null
         }
-        contactListViewModel.loadContactList(EMPTY_QUERY)
+        contactListViewModel.getLocatedContactList(EMPTY_QUERY)
             .observe(viewLifecycleOwner) { contactList ->
                 if (!contactList.isNullOrEmpty()) {
                     Log.d(TAG, "ContactListFragment обзервер сработал")
@@ -70,25 +70,16 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
                 }
             }
 
-        listFrag!!.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null) {
-                    searchContacts(query)
-                }
-                return true
-            }
-
-            override fun onQueryTextChange(query: String?): Boolean {
-                if (query != null) {
-                    searchContacts(query)
-                }
-                return true
-            }
-        })
+        listFrag!!.searchView.addTextChangedListener {
+            searchContacts(listFrag!!.searchView.text.toString())
+        }
+        listFrag!!.topAppBar.setNavigationOnClickListener {
+            findNavController().navigate(R.id.action_contactListFragment_to_profileFragment)
+        }
     }
 
     private fun searchContacts(query: String) {
-        contactListViewModel.loadContactList(query)
+        contactListViewModel.getLocatedContactList(query)
     }
 
     override fun onDestroyView() {
