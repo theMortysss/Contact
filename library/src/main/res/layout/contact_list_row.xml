@@ -7,13 +7,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
 
         <ImageView
             android:id="@+id/avatar"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:src="@mipmap/person"
+            android:src="@mipmap/profile_round"
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,6 +28,7 @@
             android:textSize="20sp"
             android:gravity="top"
             android:lineSpacingExtra="2sp"
+            android:textColor="@color/colorOnPrimary"
             android:text="@string/person_name"
             android:textAppearance="@style/person"
             android:layout_marginStart="12dp"
@@ -43,6 +45,7 @@
             android:gravity="top"
             android:lineSpacingExtra="2sp"
             android:text="@string/number"
+            android:textColor="@color/colorOnPrimary"
             android:textAppearance="@style/person"
             android:layout_marginStart="12dp"
             android:layout_marginTop="4dp"

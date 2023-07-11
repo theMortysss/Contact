@@ -22,7 +22,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/menu_bottom_main"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainContainerView"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"/>
+        style="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        app:itemIconTint="@drawable/nav_bar"
+        app:itemTextColor="@drawable/nav_bar"
+        app:itemRippleColor="@color/colorOnPrimary" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
