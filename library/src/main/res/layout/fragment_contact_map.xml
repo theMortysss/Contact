@@ -67,8 +67,7 @@
         app:layout_constraintEnd_toEndOf="@+id/map"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/baseline_edit_location_24"/>
+        android:src="@drawable/car_ui_icon_save"/>
 
     <com.yandex.mapkit.mapview.MapView
         android:id="@+id/map"

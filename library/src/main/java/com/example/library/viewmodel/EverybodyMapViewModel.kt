@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.java.entities.LocatedContact
 import com.example.java.interactors.map.everybody.EverybodyMapInteractor
 import com.example.library.utils.Constants.TAG
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,14 +20,13 @@ class EverybodyMapViewModel @Inject constructor(
         loadLocatedContactList()
     }
 
-    fun getLocatedContactList(): MutableLiveData<List<LocatedContact>> = loadLocatedContactList()
+    fun getLocatedContactList(): MutableLiveData<List<LocatedContact>> = locatedContactList
 
-    private fun loadLocatedContactList(): MutableLiveData<List<LocatedContact>> {
-        Log.d(TAG, "EverybodyMapViewModel: начинаю запрос координат контактов...")
-        viewModelScope.launch(Dispatchers.IO) {
-            locatedContactList.postValue(interactor.getLocatedContactList())
-            Log.d(TAG, "EverybodyMapViewModel: координаты контактов получены.")
+    private fun loadLocatedContactList() {
+        Log.d(TAG, "MapViewModel: начинаю запрос координат контактов...")
+        viewModelScope.launch {
+            locatedContactList.value = interactor.getLocatedContactList()
+            Log.d(TAG, "MapViewModel: координаты контактов получены")
         }
-        return locatedContactList
     }
 }

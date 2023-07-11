@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/helloFragment"
-        android:name="com.example.library.SplashFragment"
+        android:name="com.example.library.HelloFragment"
         android:label="HelloFragment" >
         <action
             android:id="@+id/action_helloFragment_to_mainFragment"

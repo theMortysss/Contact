@@ -25,10 +25,15 @@ import com.yandex.mapkit.geometry.SubpolylineHelper
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapLoadedListener
 import com.yandex.mapkit.map.MapObjectCollection
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.PolylineMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.transport.TransportFactory
-import com.yandex.mapkit.transport.masstransit.*
+import com.yandex.mapkit.transport.masstransit.PedestrianRouter
+import com.yandex.mapkit.transport.masstransit.Route
+import com.yandex.mapkit.transport.masstransit.SectionMetadata
+import com.yandex.mapkit.transport.masstransit.Session
+import com.yandex.mapkit.transport.masstransit.TimeOptions
 import com.yandex.runtime.Error
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
@@ -38,7 +43,7 @@ const val SELECTED_CONTACT_ID = "selected_id"
 const val IZHEVSK_LATITUDE = 56.851
 const val IZHEVSK_LONGITUDE = 53.214
 const val ZOOM = 12f
-const val DURATION = 1f
+const val DURATION = 5f
 const val AZIMUTH = 0.0f
 const val TILT = 0.0f
 
@@ -54,10 +59,12 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var routeMapViewModel: RouteMapViewModel
     private lateinit var locatedContactList: List<LocatedContact>
-    private lateinit var firstLocatedContact: LocatedContact
+    private lateinit var curLocatedContact: LocatedContact
+    private lateinit var curContactId: String
     private lateinit var mapView: MapView
     private lateinit var mapObjects: MapObjectCollection
-    private lateinit var dialogFragment1: ContactDialogFragment
+    private lateinit var placemark: PlacemarkMapObject
+    private lateinit var dialogFragment: ContactDialogFragment
     private lateinit var secondLocatedContact: LocatedContact
     private lateinit var polylineMapObject: PolylineMapObject
 
@@ -73,20 +80,25 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         routeMapFrag = FragmentRouteMapBinding.bind(view)
-        mapView = routeMapFrag!!.map
+        mapView = routeMapFrag!!.map as MapView
         mapObjects = mapView.map.mapObjects.addCollection()
         mapView.map.setMapLoadedListener(mapLoadedListener)
-
+        curContactId = arguments?.getString(CONTACT_ID, "") ?: ""
         routeMapViewModel.getLocatedContactList()
             .observe(viewLifecycleOwner) { list ->
                 locatedContactList = list
                 if (locatedContactList.isNotEmpty()) {
+                    curLocatedContact = locatedContactList
+                        .firstOrNull { it.id == curContactId } ?: locatedContactList[0]
+                    // curContactId = curLocatedContact.id
+                    showFirstContact(curLocatedContact)
                     routeMapFrag?.apply {
-                        tv1.text = "Пользователь не выбран"
-                        addressTv1.text = ""
                         tv2.text = "Пользователь не выбран"
                         addressTv2.text = ""
                     }
+                    dialogFragment = ContactDialogFragment
+                        .newInstance(locatedContactList.map { it.name } as ArrayList<String>)
+                    setFragmentResultListener(DIALOG_REQUEST, contactListener)
                 } else {
                     Toast.makeText(
                         context,
@@ -96,61 +108,53 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
                 }
             }
     }
-    private val contactListener1: (String, Bundle) -> Unit = { _, bundle ->
-        if (points.isNotEmpty()) points.clear()
-        val id = bundle.getInt(SELECTED_CONTACT_ID)
-        firstLocatedContact = locatedContactList[id]
-        showFirstContact(firstLocatedContact)
-        showPoints()
-    }
 
-    private val contactListener2: (String, Bundle) -> Unit = { _, bundle ->
+    private val contactListener: (String, Bundle) -> Unit = { _, bundle ->
         if (points.isNotEmpty()) points.clear()
         val id = bundle.getInt(SELECTED_CONTACT_ID)
         secondLocatedContact = locatedContactList[id]
         showSecondContact(secondLocatedContact)
-        showPoints()
-    }
 
-    private fun showPoints() {
-        if (::firstLocatedContact.isInitialized and ::secondLocatedContact.isInitialized) {
-            points.add(
-                RequestPoint(
-                    Point(firstLocatedContact.latitude, firstLocatedContact.longitude),
-                    RequestPointType.WAYPOINT,
-                    null
-                )
+        points.add(
+            RequestPoint(
+                Point(curLocatedContact.latitude, curLocatedContact.longitude),
+                RequestPointType.WAYPOINT,
+                null
             )
-            points.add(
-                RequestPoint(
-                    Point(secondLocatedContact.latitude, secondLocatedContact.longitude),
-                    RequestPointType.WAYPOINT,
-                    null
-                )
+        )
+        points.add(
+            RequestPoint(
+                Point(secondLocatedContact.latitude, secondLocatedContact.longitude),
+                RequestPointType.WAYPOINT,
+                null
             )
+        )
 
-            pdRouter = TransportFactory.getInstance().createPedestrianRouter()
-            pdRouter!!.requestRoutes(points, TimeOptions(), routeListener)
-        }
+        pdRouter = TransportFactory.getInstance().createPedestrianRouter()
+        pdRouter!!.requestRoutes(points, TimeOptions(), routeListener)
     }
 
     private fun showSecondContact(secondLocatedContact: LocatedContact) {
-        routeMapFrag?.apply {
-            tv2.text = secondLocatedContact.name
-            if (!secondLocatedContact.photoUri.isNullOrEmpty()) {
-                iv2.setImageURI(secondLocatedContact.photoUri!!.toUri())
+        with(secondLocatedContact) {
+            routeMapFrag?.apply {
+                tv2.text = secondLocatedContact.name
+                if (!secondLocatedContact.photoUri.isNullOrEmpty()) {
+                    iv2.setImageURI(secondLocatedContact.photoUri!!.toUri())
+                }
+                addressTv2.text = secondLocatedContact.address
             }
-            addressTv2.text = secondLocatedContact.address
         }
     }
 
-    private fun showFirstContact(firstLocatedContact: LocatedContact) {
-        routeMapFrag?.apply {
-            tv1.text = firstLocatedContact.name
-            if (!firstLocatedContact.photoUri.isNullOrEmpty()) {
-                iv1.setImageURI(firstLocatedContact.photoUri!!.toUri())
+    private fun showFirstContact(curLocatedContact: LocatedContact) {
+        with(curLocatedContact) {
+            routeMapFrag?.apply {
+                tv1.text = curLocatedContact.name
+                if (!curLocatedContact.photoUri.isNullOrEmpty()) {
+                    iv1.setImageURI(curLocatedContact.photoUri!!.toUri())
+                }
+                addressTv1.text = curLocatedContact.address
             }
-            addressTv1.text = firstLocatedContact.address
         }
     }
 
@@ -195,33 +199,27 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     }
 
     private val mapLoadedListener = MapLoadedListener {
-        locatedContactList.forEach {
-            mapObjects.addPlacemark(Point(it.latitude, it.longitude)).apply {
-                userData = it.id
+        if (::curLocatedContact.isInitialized) {
+            val curLocation = Point(curLocatedContact.latitude, curLocatedContact.longitude)
+            if (::placemark.isInitialized) mapObjects.remove(placemark)
+            placemark = mapObjects.addPlacemark(curLocation).apply {
+                userData = curLocatedContact.id
+            }
+            locatedContactList.forEach {
+                if (it.id != curLocatedContact.id) {
+                    mapObjects.addPlacemark(Point(it.latitude, it.longitude)).apply {
+                        userData = it.id
+                    }
+                }
             }
         }
         mapView.map.move(
             CameraPosition(TARGET_LOCATION, ZOOM, AZIMUTH, TILT),
-            Animation(Animation.Type.LINEAR, DURATION),
+            Animation(Animation.Type.SMOOTH, DURATION),
             null
         )
-        routeMapFrag?.firstContactCard?.setOnClickListener {
-            dialogFragment1 = ContactDialogFragment
-                .newInstance(locatedContactList.map { it.name } as ArrayList<String>)
-            setFragmentResultListener(
-                DIALOG_REQUEST,
-                contactListener1
-            )
-            dialogFragment1.show(parentFragmentManager, "dialog1")
-        }
-        routeMapFrag?.secondContactCard?.setOnClickListener {
-            dialogFragment1 = ContactDialogFragment
-                .newInstance(locatedContactList.map { it.name } as ArrayList<String>)
-            setFragmentResultListener(
-                DIALOG_REQUEST,
-                contactListener2
-            )
-            dialogFragment1.show(parentFragmentManager, "dialog2")
+        routeMapFrag?.addSecondContactFab?.setOnClickListener {
+            dialogFragment.show(parentFragmentManager, "dialog")
         }
     }
 
@@ -238,8 +236,8 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     }
 
     override fun onDestroyView() {
-        routeMapFrag = null
         super.onDestroyView()
+        routeMapFrag = null
     }
 
     companion object {

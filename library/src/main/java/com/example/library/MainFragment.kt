@@ -17,4 +17,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             .navController
         bottomNavigationView.setupWithNavController(navController)
     }
+
+    companion object {
+        const val usernameKey = "USER_NAME"
+    }
 }

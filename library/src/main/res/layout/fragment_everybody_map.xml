@@ -5,61 +5,66 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/contactCard"
+    <ImageView
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:id="@+id/iv1"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:layout_width="0dp"
-        android:layout_height="96dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv1"
+        app:layout_constraintStart_toEndOf="@+id/iv1"
+        app:layout_constraintTop_toTopOf="@+id/iv1"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Алексеев Даниил Олегович"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/addressLabel1"
+        app:layout_constraintTop_toBottomOf="@+id/tv1"
+        app:layout_constraintStart_toEndOf="@+id/iv1"
+        android:text="Адрес:"
+        android:layout_marginStart="12dp"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/addressTv1"
+        app:layout_constraintTop_toBottomOf="@+id/tv1"
+        app:layout_constraintStart_toEndOf="@+id/addressLabel1"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="г. Ижевск, ул. Пушкинская, 220а"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="12dp"
+        android:textStyle="italic"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/map">
-
-        <ImageView
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:id="@+id/iv1"
-            android:src="@mipmap/ic_launcher_round"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"/>
-
-        <TextView
-            android:id="@+id/tv1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="96dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="12dp"
-            android:text="Алексеев Даниил Олегович"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/addressLabel1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="96dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="40dp"
-            android:text="Адрес:" />
-
-        <TextView
-            android:id="@+id/addressTv1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="146dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="40dp"
-            android:text="г. Ижевск, ул. Пушкинская, 220а"
-            android:textStyle="italic"/>
-
-    </com.google.android.material.card.MaterialCardView>
-
+        app:layout_constraintTop_toBottomOf="@+id/iv1"
+        android:layout_marginTop="12dp"
+        android:id="@+id/divider"
+        android:background="?android:attr/listDivider"/>
 
     <com.yandex.mapkit.mapview.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/contactCard"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/divider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

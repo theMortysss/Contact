@@ -1,6 +1,7 @@
 package com.example.library.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,16 +12,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ContactListViewModel @Inject constructor(
-    private val repository: ContactListInteractor
-) : ViewModel() {
-
+class ContactListViewModel @Inject constructor(private val repository: ContactListInteractor) : ViewModel() {
     private lateinit var contactList: List<ShortContact>
     private val filteredList = MutableLiveData<List<ShortContact>>()
 
-    fun getLocatedContactList(query: String): MutableLiveData<List<ShortContact>> = loadContactList(query)
-
-    private fun loadContactList(query: String): MutableLiveData<List<ShortContact>> {
+    fun loadContactList(query: String): LiveData<List<ShortContact>> {
         Log.d(TAG, "ContactListViewModel начинаю запрос данных контактов...")
         viewModelScope.launch(Dispatchers.IO) {
             contactList = repository.getContacts(query)

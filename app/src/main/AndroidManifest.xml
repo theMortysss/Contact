@@ -8,9 +8,9 @@
     <application
         android:name="com.example.app.Application"
         android:allowBackup="true"
-        android:icon="@mipmap/messenger_logo"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/messenger_logo"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ContactTest">
         <receiver

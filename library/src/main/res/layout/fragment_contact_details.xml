@@ -10,6 +10,22 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent">
 
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/detailsActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/detailsToolBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="Details"
+                app:titleTextColor="@color/black" />
+        </com.google.android.material.appbar.AppBarLayout>
+
         <ImageView
             android:id="@+id/avatarIV"
             android:layout_width="180dp"
@@ -19,7 +35,7 @@
             android:src="@mipmap/ic_launcher_round"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/detailsActionBar" />
 
         <TextView
             android:id="@+id/nameTV"
