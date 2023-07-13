@@ -124,7 +124,7 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
                     if (!curContact.avatarUri.isNullOrEmpty()) {
                         photo.setImageURI(curContact.avatarUri!!.toUri())
                     } else {
-                        photo.setImageResource(R.mipmap.profile)
+                        photo.setImageResource(R.mipmap.profile_round)
                     }
                 }
             }

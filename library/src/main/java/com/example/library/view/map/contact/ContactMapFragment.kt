@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.java.entities.LocatedContact
 import com.example.java.entities.LocationData
 import com.example.library.R
@@ -30,7 +31,7 @@ import javax.inject.Inject
 const val IZHEVSK_LATITUDE = 56.851
 const val IZHEVSK_LONGITUDE = 53.214
 const val ZOOM = 12f
-const val DURATION = 5f
+const val DURATION = 1f
 const val AZIMUTH = 0.0f
 const val TILT = 0.0f
 
@@ -101,6 +102,9 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
             }
         }
         contactMapFrag?.saveFab?.setOnClickListener { saveChangedLocationData() }
+        contactMapFrag?.topAppBar?.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
     }
 
     private fun saveChangedLocationData() {

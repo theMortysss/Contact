@@ -6,10 +6,12 @@
     <item
         android:id="@+id/contactListFragment"
         android:icon="@drawable/baseline_account_circle_24"
-        android:title="@string/mainTitleContact"/>
+        android:title="@string/mainTitleContact"
+        android:enabled="true"/>
 
     <item
         android:id="@+id/mapFragment"
         android:icon="@drawable/baseline_location_on_24"
-        android:title="@string/mainTitleMap"/>
+        android:title="@string/mainTitleMap"
+        android:enabled="true"/>
 </menu>

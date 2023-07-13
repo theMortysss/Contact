@@ -26,9 +26,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainContainerView"
-        style="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         app:itemIconTint="@drawable/nav_bar"
         app:itemTextColor="@drawable/nav_bar"
-        app:itemRippleColor="@color/colorOnPrimary" />
+        app:itemRippleColor="@color/colorOnPrimary"
+        android:layout_alignParentBottom="true"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,7 +19,8 @@ class MapFragment : Fragment(R.layout.fragment_map) {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        view.findViewById<BottomNavigationView>(R.id.mapBottomNavigation)
+            .setBackgroundResource(R.color.colorPrimary)
         val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.mapBottomNavigation)
         val navController = (childFragmentManager.findFragmentById(R.id.mapContainerView) as NavHostFragment)
             .navController

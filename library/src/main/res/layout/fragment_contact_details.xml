@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/colorPrimary">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/toolbar"
@@ -27,31 +28,43 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_height="0dp"
             android:layout_width="match_parent">
 
-            <ImageView
-                android:id="@+id/photo"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/photoCard"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:layout_marginTop="60dp"
+                android:layout_gravity="center"
+                app:strokeWidth="0dp"
+                app:cardCornerRadius="250dp"
+                app:cardElevation="0dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:src="@mipmap/profile"/>
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/profile_round" />
+
+            </com.google.android.material.card.MaterialCardView>
 
             <ImageView
                 android:id="@+id/decoration"
-                android:layout_width="138dp"
-                android:layout_height="138dp"
-                app:layout_constraintStart_toStartOf="@id/photo"
-                app:layout_constraintTop_toTopOf="@id/photo"
-                app:layout_constraintEnd_toEndOf="@id/photo"
-                app:layout_constraintBottom_toBottomOf="@id/photo"
-                android:src="@drawable/decoration"/>
+                android:layout_width="178dp"
+                android:layout_height="178dp"
+                android:src="@drawable/decoration"
+                app:layout_constraintStart_toStartOf="@id/photoCard"
+                app:layout_constraintTop_toTopOf="@id/photoCard"
+                app:layout_constraintEnd_toEndOf="@id/photoCard"
+                app:layout_constraintBottom_toBottomOf="@id/photoCard"/>
 
             <TextView
                 android:id="@+id/name"
@@ -127,6 +140,7 @@
                 android:layout_marginEnd="24dp"
                 android:scaleX="1.3"
                 android:scaleY="1.3"
+                android:text=""
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/birthday_notify"
                 app:layout_constraintBottom_toBottomOf="@id/birthday_notify"/>
@@ -245,230 +259,6 @@
                 app:layout_constraintTop_toTopOf="@+id/note"
                 app:layout_constraintBottom_toBottomOf="@id/note"/>
 
-            <!--            <ImageView-->
-<!--                android:layout_width="40dp"-->
-<!--                android:layout_height="40dp"-->
-<!--                android:src="@drawable/baseline_call_24"-->
-<!--                android:layout_marginStart="100dp"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/nameTV"/>-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/phoneIV"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:layout_marginTop="26dp"-->
-<!--                android:src="@android:drawable/stat_sys_phone_call"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/nameTV"-->
-<!--                app:tint="@color/black" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/phoneTV"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="8dp"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:layout_marginEnd="46dp"-->
-<!--                android:text="+7 987 65 43 21"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="16sp"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toEndOf="@id/phoneIV"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/nameTV" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/phoneLabel"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Мобильный"-->
-<!--                android:textSize="14sp"-->
-<!--                app:layout_constraintStart_toStartOf="@id/phoneTV"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/phoneTV" />-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/emailIV"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:layout_marginTop="30dp"-->
-<!--                android:src="@android:drawable/ic_dialog_email"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/phoneLabel"-->
-<!--                app:tint="@color/black" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/emailTV"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="8dp"-->
-<!--                android:layout_marginTop="28dp"-->
-<!--                android:layout_marginEnd="46dp"-->
-<!--                android:text="email@email.com"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="16sp"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toEndOf="@id/emailIV"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/phoneLabel" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/emailLabel"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Электронная почта"-->
-<!--                android:textSize="14sp"-->
-<!--                app:layout_constraintStart_toStartOf="@id/emailTV"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/emailTV" />-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/addressIV"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:layout_marginTop="30dp"-->
-<!--                android:src="@drawable/search_layer_pin_selected_default"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/emailLabel"-->
-<!--                app:tint="@color/black" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/addressLabel"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="8dp"-->
-<!--                android:layout_marginTop="28dp"-->
-<!--                android:text="Адрес"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="16sp"-->
-<!--                app:layout_constraintStart_toEndOf="@id/descriptionIV"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/emailLabel" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/addressTV"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="46dp"-->
-<!--                android:text="г.Ижевск, ул.Удмуртская, 164-28"-->
-<!--                android:textSize="14sp"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="@+id/addressLabel"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/addressLabel" />-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/birthdayIV"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:layout_marginTop="30dp"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/addressTV"-->
-<!--                app:srcCompat="@android:drawable/ic_menu_my_calendar"-->
-<!--                app:tint="@color/black" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/birthdayLabel"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="8dp"-->
-<!--                android:layout_marginTop="28dp"-->
-<!--                android:text="День рождения"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="16sp"-->
-<!--                app:layout_constraintStart_toEndOf="@id/birthdayIV"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/addressTV" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/birthdayTV"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="46dp"-->
-<!--                android:text="31.12.2000"-->
-<!--                android:textSize="14sp"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="@+id/birthdayLabel"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/birthdayLabel" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/birthdaySwitchLabel"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Включить напоминаяние"-->
-<!--                android:textSize="14sp"-->
-<!--                app:layout_constraintStart_toStartOf="@id/birthdayTV"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/birthdayTV" />-->
-
-<!--            <ToggleButton-->
-<!--                android:id="@+id/birthdayButton"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:layout_marginTop="-4dp"-->
-<!--                android:textOff="remind off"-->
-<!--                android:textOn="remind on"-->
-<!--                app:layout_constraintStart_toEndOf="@id/birthdaySwitchLabel"-->
-<!--                app:layout_constraintTop_toTopOf="@id/birthdaySwitchLabel" />-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/descriptionIV"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:layout_marginTop="30dp"-->
-<!--                android:src="@drawable/car_ui_icon_edit"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@id/birthdaySwitchLabel"-->
-<!--                app:tint="@color/black" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/descriptionLabel"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="8dp"-->
-<!--                android:layout_marginTop="28dp"-->
-<!--                android:text="Заметка"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="16sp"-->
-<!--                app:layout_constraintStart_toEndOf="@id/descriptionIV"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/birthdaySwitchLabel" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/descriptionTV"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="46dp"-->
-<!--                android:text="A little description of this contact in a few lines 1111111111111111111111111111111111111111"-->
-<!--                android:textSize="14sp"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="@+id/descriptionLabel"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/descriptionLabel" />-->
-
-<!--            <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--                android:id="@+id/toContactMapFragmentFab"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="12dp"-->
-<!--                android:clickable="true"-->
-<!--                android:focusable="true"-->
-<!--                app:fabSize="normal"-->
-<!--                app:layout_constraintTop_toTopOf="@+id/emailLabel"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:srcCompat="@android:drawable/ic_menu_mylocation"-->
-<!--                tools:ignore="ContentDescription" />-->
-
-<!--            <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--                android:id="@+id/deleteLocationDataFab"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="12dp"-->
-<!--                android:layout_marginEnd="12dp"-->
-<!--                android:clickable="true"-->
-<!--                android:visibility="gone"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/toContactMapFragmentFab"-->
-<!--                app:srcCompat="@android:drawable/ic_delete"-->
-<!--                tools:ignore="ContentDescription"-->
-<!--                tools:visibility="visible" />-->
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </LinearLayout>
