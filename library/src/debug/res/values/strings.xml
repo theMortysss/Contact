@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">library</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mainTitleContact">Контакты</string>
+    <string name="mainTitleMap">Карта</string>
+    <string name="titleEverybodyMap">Все</string>
+    <string name="titleContactMap">Контакт</string>
+    <string name="titleRouteMap">Путь</string>
+    <string name="hello_fragment">Привет!</string>
+    <string name="more">Больше</string>
+    <string name="search">Поиск</string>
+    <string name="favorite">Избранное</string>
+    <string name="contacts_title">Контакты</string>
+    <!-- strings.xml -->
+    <string name="person_name">Олег Поттер</string>
+    <string name="number">+7–999–888–77–66</string>
+    <string name="contact_details_title">О контакте</string>
+    <string name="contactName">Олег Поттер</string>
+    <string name="email">email@email.com</string>
+    <string name="birthday">Включить напоминание</string>
+    <string name="address">Изменить адрес</string>
+    <string name="address_text">ул. Пушкинская, 238а</string>
+    <string name="birthday_text">05.09.2000</string>
+    <string name="note_text">Заметки о контакте</string>
+    <string name="address_delete">Удалить адрес</string>
+    <string name="permissions_request_introduction_title">Требуются разрешения</string>
+    <string name="permissions_request_introduction_msg">Сейчас будут запрошены разрешения, без которых приложение не сможет работать. Просим подтвердить все запрашиваемые разрешения.</string>
+    <string name="permissions_request_epilogue_title">Требуются разрешения</string>
+    <string name="permissions_request_epilogue_msg">Пожалуйста примите все запрошенные разрешения. Без них работа приложения невозможна.</string>
+    <string name="permissions_request_epilogue_ok_btn">Предоставить разрешения</string>
+    <string name="permissions_request_epilogue_cancel_btn">Нет, выйти из приложения</string>
+</resources>
