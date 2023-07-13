@@ -26,7 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.library.MapFragment"
+        android:name="com.example.library.view.MapFragment"
         android:label="MapFragment" />
     <fragment
         android:id="@+id/contactMapFragment"
@@ -34,7 +34,7 @@
         android:label="ContactMapFragment" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.library.ProfileFragment"
+        android:name="com.example.library.view.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>

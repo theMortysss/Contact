@@ -1,6 +1,5 @@
 package com.example.library.repository.alarm
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -26,14 +25,15 @@ class BirthdayRepository @Inject constructor(
     private val appContext: Context
 ) : IBirthdayRepository {
 
-    override fun isBirthdayAlarmOn(curContact: Contact) = PendingIntent.getBroadcast(
-        appContext,
-        curContact.id.hashCode(),
-        Intent(appContext, BirthdayReceiver::class.java),
-        PendingIntent.FLAG_IMMUTABLE
-    ) != null
+    override fun isBirthdayAlarmOn(curContact: Contact): Boolean =
+        PendingIntent.getBroadcast(
+            appContext,
+            curContact.id.hashCode(),
+            Intent(appContext, BirthdayReceiver::class.java),
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        ) != null
 
-    @SuppressLint("UnspecifiedImmutableFlag")
+
     override fun setBirthdayAlarm(curContact: Contact, alarmStartMoment: Calendar) {
         if (curContact.birthday != null) {
             val birthday = curContact.birthday as Calendar
@@ -49,7 +49,7 @@ class BirthdayRepository @Inject constructor(
                         appContext,
                         curContact.id.hashCode(),
                         intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
                 }
             alarmManager.setInexactRepeating(
@@ -62,7 +62,13 @@ class BirthdayRepository @Inject constructor(
             Toast.makeText(
                 appContext,
                 "Напоминание установлено",
-                Toast.LENGTH_LONG
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                appContext,
+                "День рождения не был задан",
+                Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -73,14 +79,14 @@ class BirthdayRepository @Inject constructor(
             appContext,
             curContact.id.hashCode(),
             Intent(appContext, BirthdayReceiver::class.java),
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         alarmManager.cancel(alarmPendingIntent)
         alarmPendingIntent.cancel()
         Toast.makeText(
             appContext,
             "Напоминание отменено",
-            Toast.LENGTH_LONG
+            Toast.LENGTH_SHORT
         ).show()
     }
 

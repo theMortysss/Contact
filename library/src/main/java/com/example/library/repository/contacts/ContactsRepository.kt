@@ -190,13 +190,11 @@ class ContactsRepository(private val contentResolver: ContentResolver) :
         )?.use { cursor ->
             if (cursor.moveToFirst()) {
                 birthday = cursor.getString(0)
-                    .split("-")
                     .let { date ->
                         Calendar.getInstance().apply {
-                            Log.d(TAG, "date = $date")
-//                        set(Calendar.DAY_OF_MONTH, date[2].toInt())
-//                        set(Calendar.MONTH, date[1].toInt() - 1)
-//                        set(Calendar.YEAR, date[0].toInt())
+                            set(Calendar.DAY_OF_MONTH, date.toString().substring(6,8).toInt())
+                            set(Calendar.MONTH, date.toString().substring(4,6).toInt() - 1)
+                            set(Calendar.YEAR, date.toString().substring(0,4).toInt())
                         }
                     }
             }

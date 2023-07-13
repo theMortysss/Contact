@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ProfileFragment">
+    tools:context=".view.ProfileFragment">
 
     <ImageView
         android:id="@+id/back"
@@ -27,14 +27,14 @@
         android:src="@mipmap/profile"/>
 
     <ImageView
-        android:id="@+id/code"
+        android:id="@+id/decoration"
         android:layout_width="168dp"
         android:layout_height="168dp"
         app:layout_constraintStart_toStartOf="@id/profile"
         app:layout_constraintTop_toTopOf="@id/profile"
         app:layout_constraintEnd_toEndOf="@id/profile"
         app:layout_constraintBottom_toBottomOf="@id/profile"
-        android:src="@drawable/code"/>
+        android:src="@drawable/decoration"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -46,6 +46,6 @@
         android:textColor="@color/black"
         android:layout_marginTop="12dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/code"
+        app:layout_constraintTop_toBottomOf="@id/decoration"
         app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

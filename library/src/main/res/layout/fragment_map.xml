@@ -24,6 +24,8 @@
         app:menu="@menu/menu_bottom_map"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/mapContainerView"
-        android:background="@color/colorPrimary"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"/>
+        style="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        app:itemIconTint="@drawable/nav_bar"
+        app:itemTextColor="@drawable/nav_bar"
+        app:itemRippleColor="@color/colorOnPrimary"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

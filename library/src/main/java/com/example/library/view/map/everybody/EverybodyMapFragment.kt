@@ -82,7 +82,7 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
                     Toast.makeText(
                         context,
                         "Нет контактов с локацией",
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
             }
@@ -119,17 +119,18 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
         }
 
     private val mapLoadedListener = MapLoadedListener {
-        locatedContactList.forEach {
-            mapObjects.addPlacemark(Point(it.latitude, it.longitude)).apply {
-                userData = it.id
+        if (::locatedContactList.isInitialized) {
+            locatedContactList.forEach {
+                mapObjects.addPlacemark(Point(it.latitude, it.longitude)).apply {
+                    userData = it.id
+                }
             }
+            mapView.map.move(
+                CameraPosition(TARGET_LOCATION, ZOOM, AZIMUTH, TILT),
+                Animation(Animation.Type.LINEAR, DURATION),
+                null
+            )
         }
-
-        mapView.map.move(
-            CameraPosition(TARGET_LOCATION, ZOOM, AZIMUTH, TILT),
-            Animation(Animation.Type.LINEAR, DURATION),
-            null
-        )
     }
 
     override fun onStop() {

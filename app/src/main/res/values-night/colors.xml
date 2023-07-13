@@ -9,7 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="colorOnPrimary">#FFFFFFFF</color>
     <color name="colorPrimary">#212121</color>
-    <color name="colorPrimaryVariant">#000000</color>
+    <color name="colorPrimaryVariant">#FFFFFFFF</color>
     <color name="colorButton">#10ffffff</color>
-    <color name="colorButtonNav">#212121</color>
+    <color name="colorButtonNav">@android:color/darker_gray</color>
 </resources>
