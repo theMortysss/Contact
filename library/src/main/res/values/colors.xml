@@ -11,4 +11,6 @@
     <color name="colorPrimaryVariant">#FF000000</color>
     <color name="colorPrimary">#FFFFFFFF</color>
     <color name="colorButton">#0D000000</color>
+    <color name="colorButtonNav">@android:color/darker_gray</color>
+    <color name="decor_blue">#0584FE</color>
 </resources>

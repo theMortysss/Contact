@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
 
-    private var detailsFrag: FragmentContactDetailsBinding? = null
+    private lateinit var detailsFrag: FragmentContactDetailsBinding
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -45,22 +45,22 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
         super.onViewCreated(view, savedInstanceState)
         detailsFrag = FragmentContactDetailsBinding.bind(view)
 
-        detailsFrag?.addressChangeText?.setOnClickListener {
+        detailsFrag.addressChangeCard.setOnClickListener {
             findNavController().navigate(
                 R.id.action_contactDetailsFragment_to_contactMapFragment,
                 bundleOf(ContactMapFragment.CONTACT_ID to contactId)
             )
         }
-        detailsFrag?.topAppBar?.setNavigationOnClickListener {
+        detailsFrag.topAppBar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
-        detailsFrag?.addressDeleteText?.setOnClickListener(deleteLocationDataListener)
+        detailsFrag.addressDeleteCard.setOnClickListener(deleteLocationDataListener)
 
         contactDetailsViewModel.getContactDetails(contactId)
             .observe(viewLifecycleOwner) { curContact ->
                 try {
                     showContactData(curContact[0])
-                    detailsFrag?.birthdaySwitch?.setOnCheckedChangeListener { _, isChecked ->
+                    detailsFrag.birthdaySwitch.setOnCheckedChangeListener { _, isChecked ->
                         if (isChecked) {
                             contactDetailsViewModel.setBirthdayAlarm(curContact[0])
                         } else {
@@ -81,16 +81,18 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
     private fun showLocationData(curLocation: LocationData?) {
         if (curLocation != null) {
             with(curLocation) {
-                detailsFrag?.apply {
+                detailsFrag.apply {
                     addressText.text = curLocation.address
-                    addressDeleteText.visibility = View.VISIBLE
-                    addressDelete.visibility = View.VISIBLE
+                    addressDeleteCard.visibility = View.VISIBLE
+//                    addressDeleteText.visibility = View.VISIBLE
+//                    addressDelete.visibility = View.VISIBLE
                 }
             }
         } else {
-            detailsFrag?.apply {
-                addressDelete.visibility = View.GONE
-                addressDeleteText.visibility = View.GONE
+            detailsFrag.apply {
+                addressDeleteCard.visibility = View.GONE
+//                addressDelete.visibility = View.GONE
+//                addressDeleteText.visibility = View.GONE
                 addressText.text = "Адрес пока не задан"
             }
         }
@@ -99,11 +101,13 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
     private fun showContactData(curContact: Contact?) {
         if (curContact != null) {
             with(curContact) {
-                detailsFrag?.apply {
-                    name.text = curContact.name
-                    phone.text = curContact.phone
-                    email.text = curContact.email
-                    noteText.text = curContact.description
+                detailsFrag.apply {
+                    name.text = if (curContact.name != "") { curContact.name } else { "Пока не задан" }
+                    phone.text = if (curContact.phone != "") { curContact.phone } else { "Пока не задан" }
+                    email.text = if (curContact.email != "") { curContact.email } else { "Пока не задан" }
+                    noteText.text = if (curContact.description != "") {
+                        curContact.description } else { "Пока не задан"
+                    }
                     birthdayText.text = if (birthday != null) {
                         birthday!!.get(Calendar.DAY_OF_MONTH).toString() + " " +
                             birthday!!.getDisplayName(
@@ -115,12 +119,10 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
                         "День рождения пока не задан"
                     }
                     birthdaySwitch.isChecked = if (birthday != null) {
-                        Log.d(TAG, "Свитч = ${contactDetailsViewModel.isBirthdayAlarmOn(curContact)}")
                         contactDetailsViewModel.isBirthdayAlarmOn(curContact)
                     } else {
                         false
                     }
-//                    birthdayButton.visibility = if (birthday != null) View.VISIBLE else View.GONE
                     if (!curContact.avatarUri.isNullOrEmpty()) {
                         photo.setImageURI(curContact.avatarUri!!.toUri())
                     } else {
@@ -131,16 +133,12 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
         }
     }
 
-    override fun onDestroyView() {
-        detailsFrag = null
-        super.onDestroyView()
-    }
-
     private val deleteLocationDataListener = View.OnClickListener {
-        detailsFrag?.addressDelete?.visibility = View.GONE
-        detailsFrag?.addressDeleteText?.visibility = View.GONE
+        detailsFrag.addressDeleteCard.visibility = View.GONE
+//        detailsFrag?.addressDelete?.visibility = View.GONE
+//        detailsFrag?.addressDeleteText?.visibility = View.GONE
         contactDetailsViewModel.deleteLocationData(contactId)
-        detailsFrag?.addressText?.text = "Адрес пока не задан"
+        detailsFrag.addressText.text = "Адрес пока не задан"
     }
 
     companion object {

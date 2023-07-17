@@ -1,8 +1,12 @@
 package com.example.library.view.map.route
 
+import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -19,10 +23,7 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.RequestPoint
 import com.yandex.mapkit.RequestPointType
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.geometry.Polyline
-import com.yandex.mapkit.geometry.SubpolylineHelper
-import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.geometry.*
 import com.yandex.mapkit.map.MapLoadedListener
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.PolylineMapObject
@@ -30,19 +31,16 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.transport.TransportFactory
 import com.yandex.mapkit.transport.masstransit.*
 import com.yandex.runtime.Error
+import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
 import javax.inject.Inject
 
 const val SELECTED_CONTACT_ID = "selected_id"
-const val IZHEVSK_LATITUDE = 56.851
-const val IZHEVSK_LONGITUDE = 53.214
 const val ZOOM = 12f
 const val DURATION = 1f
 const val AZIMUTH = 0.0f
 const val TILT = 0.0f
-
-private val TARGET_LOCATION = Point(IZHEVSK_LATITUDE, IZHEVSK_LONGITUDE)
 
 class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
 
@@ -76,6 +74,12 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
         mapView = routeMapFrag!!.map
         mapObjects = mapView.map.mapObjects.addCollection()
         mapView.map.setMapLoadedListener(mapLoadedListener)
+
+        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> { mapView.map.isNightModeEnabled = true }
+            Configuration.UI_MODE_NIGHT_NO -> { mapView.map.isNightModeEnabled = false }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> { mapView.map.isNightModeEnabled = false }
+        }
 
         routeMapViewModel.getLocatedContactList()
             .observe(viewLifecycleOwner) { list ->
@@ -142,6 +146,12 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
             }
             addressTv2.text = secondLocatedContact.address
         }
+        mapObjects.addPlacemark(
+            Point(secondLocatedContact.latitude, secondLocatedContact.longitude),
+            ImageProvider.fromBitmap(getBitmapFromVectorDrawable(R.drawable.baseline_place_24))
+        ).apply {
+            userData = secondLocatedContact.id
+        }
     }
 
     private fun showFirstContact(firstLocatedContact: LocatedContact) {
@@ -151,6 +161,12 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
                 iv1.setImageURI(firstLocatedContact.photoUri!!.toUri())
             }
             addressTv1.text = firstLocatedContact.address
+        }
+        mapObjects.addPlacemark(
+            Point(firstLocatedContact.latitude, firstLocatedContact.longitude),
+            ImageProvider.fromBitmap(getBitmapFromVectorDrawable(R.drawable.baseline_place_24))
+        ).apply {
+            userData = firstLocatedContact.id
         }
     }
 
@@ -166,6 +182,9 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
                         )
                     )
                 }
+                val geometry = Geometry.fromBoundingBox(getBoundingBox(routes[0].geometry.points))
+                val position = mapView.map.cameraPosition(geometry, ZOOM, AZIMUTH, null)
+                mapView.map.move(position, Animation(Animation.Type.LINEAR, DURATION), null)
             }
         }
 
@@ -189,22 +208,27 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
             polylineMapObject = mapObjects.addPolyline(geometry)
 
             if (data.transports == null) {
-                polylineMapObject.setStrokeColor(-0x10000)
+                polylineMapObject.setStrokeColor(resources.getColor(android.R.color.holo_green_light))
             }
         }
     }
 
     private val mapLoadedListener = MapLoadedListener {
-        locatedContactList.forEach {
-            mapObjects.addPlacemark(Point(it.latitude, it.longitude)).apply {
-                userData = it.id
+        // < Временное
+        if (::locatedContactList.isInitialized) {
+            locatedContactList.forEach {
+                mapObjects.addPlacemark(
+                    Point(it.latitude, it.longitude),
+                    ImageProvider.fromBitmap(getBitmapFromVectorDrawable(R.drawable.baseline_place_24))
+                ).apply {
+                    userData = it.id
+                }
             }
+            val geometry = Geometry.fromBoundingBox(getBoundingBoxX(locatedContactList))
+            val position = mapView.map.cameraPosition(geometry, ZOOM, AZIMUTH, null)
+            mapView.map.move(position, Animation(Animation.Type.LINEAR, DURATION), null)
         }
-        mapView.map.move(
-            CameraPosition(TARGET_LOCATION, ZOOM, AZIMUTH, TILT),
-            Animation(Animation.Type.LINEAR, DURATION),
-            null
-        )
+        // Временное >
         routeMapFrag?.firstContactCard?.setOnClickListener {
             dialogFragment1 = ContactDialogFragment
                 .newInstance(locatedContactList.map { it.name } as ArrayList<String>)
@@ -223,6 +247,70 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
             )
             dialogFragment1.show(parentFragmentManager, "dialog2")
         }
+    }
+
+    // < Временное
+    private fun getBoundingBox(points: MutableList<Point>): BoundingBox {
+        var minLatitude = Double.MAX_VALUE
+        var maxLatitude = -Double.MAX_VALUE
+        var minLongitude = Double.MAX_VALUE
+        var maxLongitude = -Double.MAX_VALUE
+
+        points.forEach {
+            val annotationLat = it.latitude
+            val annotationLong = it.longitude
+            minLatitude = java.lang.Double.min(annotationLat, minLatitude)
+            maxLatitude = java.lang.Double.max(annotationLat, maxLatitude)
+            minLongitude = java.lang.Double.min(annotationLong, minLongitude)
+            maxLongitude = java.lang.Double.max(annotationLong, maxLongitude)
+        }
+        val latitudePadding = (maxLatitude - minLatitude) / 2
+        val longitudePadding = (maxLongitude - minLongitude) / 2
+
+        return BoundingBox(
+            Point(minLatitude - latitudePadding, minLongitude - longitudePadding),
+            Point(maxLatitude + latitudePadding / 2, maxLongitude + longitudePadding)
+        )
+    }
+
+    // Временное
+    private fun getBoundingBoxX(points: List<LocatedContact>): BoundingBox {
+        var minLatitude = Double.MAX_VALUE
+        var maxLatitude = -Double.MAX_VALUE
+        var minLongitude = Double.MAX_VALUE
+        var maxLongitude = -Double.MAX_VALUE
+
+        points.forEach {
+            val annotationLat = it.latitude
+            val annotationLong = it.longitude
+            minLatitude = java.lang.Double.min(annotationLat, minLatitude)
+            maxLatitude = java.lang.Double.max(annotationLat, maxLatitude)
+            minLongitude = java.lang.Double.min(annotationLong, minLongitude)
+            maxLongitude = java.lang.Double.max(annotationLong, maxLongitude)
+        }
+        val latitudePadding = (maxLatitude - minLatitude) / 2
+        val longitudePadding = (maxLongitude - minLongitude) / 2
+
+        return BoundingBox(
+            Point(minLatitude - latitudePadding, minLongitude - longitudePadding),
+            Point(maxLatitude + latitudePadding / 2, maxLongitude + longitudePadding)
+        )
+    }
+    // Временное >
+
+    private fun getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
+        val drawable = ContextCompat.getDrawable(requireContext(), drawableId) ?: return null
+
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        ) ?: return null
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        return bitmap
     }
 
     override fun onStop() {

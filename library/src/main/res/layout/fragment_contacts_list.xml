@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/contacts_title"
+            app:titleCentered="true"
             app:menu="@menu/contacts_top_app_bar"
-            app:navigationIcon="@drawable/baseline_menu_24"
             app:titleTextAppearance="@style/Toolbar.TitleText"/>
 
     </com.google.android.material.appbar.AppBarLayout>

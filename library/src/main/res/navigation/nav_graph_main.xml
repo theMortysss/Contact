@@ -12,9 +12,6 @@
         <action
             android:id="@+id/action_contactListFragment_to_contactDetailsFragment"
             app:destination="@id/contactDetailsFragment" />
-        <action
-            android:id="@+id/action_contactListFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/contactDetailsFragment"
@@ -32,9 +29,4 @@
         android:id="@+id/contactMapFragment"
         android:name="com.example.library.view.map.contact.ContactMapFragment"
         android:label="ContactMapFragment" />
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.library.view.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
 </navigation>

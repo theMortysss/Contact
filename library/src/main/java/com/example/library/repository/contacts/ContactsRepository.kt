@@ -182,7 +182,7 @@ class ContactsRepository(private val contentResolver: ContentResolver) :
     private fun getContactBirthday(id: String): Calendar? {
         var birthday: Calendar? = null
         contentResolver.query(
-            ContactsContract.Data.CONTENT_URI,
+            DATA_CONTENT_URI,
             BIRTHDAY_PROJECTION,
             SELECTION_BIRTHDAY,
             arrayOf(id),
@@ -219,6 +219,7 @@ class ContactsRepository(private val contentResolver: ContentResolver) :
                 } while (cursor.moveToNext())
             }
         }
+        Log.d(TAG, "note = $note")
         return note
     }
 }

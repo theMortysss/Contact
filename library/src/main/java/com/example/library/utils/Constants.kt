@@ -12,6 +12,6 @@ object Constants {
     const val CHANNEL_ID = "com.example.contacts" // id канала нотификаций
     const val ANDROID_RESOURCE = "android.resource://"
     const val BASE_YANDEX_GEOCODER_API_URL = "https://geocode-maps.yandex.ru/" // для Retrofit
-    const val EMPTY_VALUE = "-"
+    const val EMPTY_VALUE = ""
     lateinit var notificationSound: Uri // звук нотификации
 }

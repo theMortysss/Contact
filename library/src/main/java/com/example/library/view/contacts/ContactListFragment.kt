@@ -73,9 +73,6 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
         listFrag!!.searchView.addTextChangedListener {
             searchContacts(listFrag!!.searchView.text.toString())
         }
-        listFrag!!.topAppBar.setNavigationOnClickListener {
-            findNavController().navigate(R.id.action_contactListFragment_to_profileFragment)
-        }
     }
 
     private fun searchContacts(query: String) {

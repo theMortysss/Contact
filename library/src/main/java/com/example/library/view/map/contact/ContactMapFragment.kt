@@ -1,9 +1,13 @@
 package com.example.library.view.map.contact
 
+import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +30,7 @@ import com.yandex.mapkit.map.MapLoadedListener
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.runtime.image.ImageProvider
 import javax.inject.Inject
 
 const val IZHEVSK_LATITUDE = 56.851
@@ -68,6 +73,11 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         mapObjects = mapView.map.mapObjects.addCollection()
         mapView.map.setMapLoadedListener(mapLoadedListener)
         mapView.map.addInputListener(inputListener)
+        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> { mapView.map.isNightModeEnabled = true }
+            Configuration.UI_MODE_NIGHT_NO -> { mapView.map.isNightModeEnabled = false }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> { mapView.map.isNightModeEnabled = false }
+        }
         contactId = arguments?.getString(CONTACT_ID, "") ?: ""
         contactMapViewModel.getLocatedContactList().observe(viewLifecycleOwner) { locatedContactList ->
             findLocatedContact(locatedContactList)
@@ -166,24 +176,19 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
     }
 
     private val mapLoadedListener = MapLoadedListener {
-        var startLocation = curChangedLocationData?.let {
-            Point(
-                it.latitude,
-                it.longitude
-            )
-        }
-        if (startLocation == null) {
-            if (isNewContact) {
-                startLocation = TARGET_LOCATION
-            } else {
-                startLocation = Point(curLocatedContact.latitude, curLocatedContact.longitude)
-                // if (::placemark.isInitialized) mapObjects.remove(placemark)
-                placemark = mapObjects.addPlacemark(startLocation)
-            }
+        val startLocation: Point?
+        if (isNewContact) {
+            startLocation = TARGET_LOCATION
         } else {
-            if (::placemark.isInitialized) mapObjects.remove(placemark)
-            placemark = mapObjects.addPlacemark(startLocation)
+            startLocation = Point(curLocatedContact.latitude, curLocatedContact.longitude)
         }
+
+        if (::placemark.isInitialized) mapObjects.remove(placemark)
+        placemark = mapObjects.addPlacemark(
+            startLocation,
+            ImageProvider.fromBitmap(getBitmapFromVectorDrawable(R.drawable.baseline_place_24))
+        )
+
         mapView.map.move(
             CameraPosition(TARGET_LOCATION, ZOOM, AZIMUTH, TILT),
             Animation(Animation.Type.SMOOTH, DURATION),
@@ -195,7 +200,10 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         override fun onMapTap(p0: Map, point: Point) {
             Log.d(TAG, "ContactMapFragment:onMapClickListener есть клик по карте")
             if (::placemark.isInitialized) mapObjects.remove(placemark)
-            placemark = mapObjects.addPlacemark(point)
+            placemark = mapObjects.addPlacemark(
+                point,
+                ImageProvider.fromBitmap(getBitmapFromVectorDrawable(R.drawable.baseline_place_24))
+            )
             contactMapViewModel.setChangedLocationData(
                 LocationData(
                     longitude = point.longitude,
@@ -208,6 +216,20 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         override fun onMapLongTap(p0: Map, point: Point) {
             TODO("Not yet implemented")
         }
+    }
+    private fun getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
+        var drawable = ContextCompat.getDrawable(requireContext(), drawableId) ?: return null
+
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        ) ?: return null
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        return bitmap
     }
 
     companion object {

@@ -47,7 +47,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 
     // Yandex MapKit
-    def yandex_mapkit_version = "4.2.2-full"
+    def yandex_mapkit_version = "4.3.1-full"
     implementation "com.yandex.android:maps.mobile:$yandex_mapkit_version"
 
     // Gson

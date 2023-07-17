@@ -3,18 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/favorite"
-        android:icon="@drawable/baseline_favorite_24"
-        android:title="@string/favorite"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/search"
-        android:icon="@drawable/baseline_search_24"
-        android:title="@string/search"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/more"
         android:title="@string/more"
         app:showAsAction="never" />
