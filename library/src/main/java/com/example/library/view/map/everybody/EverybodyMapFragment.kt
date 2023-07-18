@@ -1,13 +1,10 @@
 package com.example.library.view.map.everybody
 
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +13,7 @@ import com.example.library.R
 import com.example.library.databinding.FragmentEverybodyMapBinding
 import com.example.library.di.HasAppComponent
 import com.example.library.utils.Constants.TAG
+import com.example.library.utils.DrawbleToBitmap.getBitmapFromVectorDrawable
 import com.example.library.utils.injectViewModel
 import com.example.library.viewmodel.EverybodyMapViewModel
 import com.yandex.mapkit.Animation
@@ -70,7 +68,6 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
             Configuration.UI_MODE_NIGHT_NO -> { mapView.map.isNightModeEnabled = false }
             Configuration.UI_MODE_NIGHT_UNDEFINED -> { mapView.map.isNightModeEnabled = false }
         }
-        // curContactId = arguments?.getString(CONTACT_ID, "") ?: ""
 
         everybodyMapFrag?.apply {
             tv1.text = "Пользователь не выбран"
@@ -93,19 +90,17 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
     }
 
     private fun showLocatedContact(curLocatedContact: LocatedContact) {
-        with(curLocatedContact) {
-            everybodyMapFrag?.apply {
-                tv1.text = curLocatedContact.name
-                if (!curLocatedContact.photoUri.isNullOrEmpty()) {
-                    iv1.setImageURI(curLocatedContact.photoUri!!.toUri())
-                }
-                addressTv1.text = curLocatedContact.address
+        everybodyMapFrag?.apply {
+            tv1.text = curLocatedContact.name
+            if (!curLocatedContact.photoUri.isNullOrEmpty()) {
+                iv1.setImageURI(curLocatedContact.photoUri!!.toUri())
             }
+            addressTv1.text = curLocatedContact.address
         }
     }
 
     private val mapObjectTapListener =
-        MapObjectTapListener { mapObject, point ->
+        MapObjectTapListener { mapObject, _ ->
             mapObject as PlacemarkMapObject
             curLocatedContact = locatedContactList.first { it.id == mapObject.userData }
             showLocatedContact(curLocatedContact)
@@ -123,7 +118,9 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
             locatedContactList.forEach {
                 mapObjects.addPlacemark(
                     Point(it.latitude, it.longitude),
-                    ImageProvider.fromBitmap(getBitmapFromVectorDrawable(R.drawable.baseline_place_24))
+                    ImageProvider.fromBitmap(
+                        getBitmapFromVectorDrawable(requireContext(), R.drawable.baseline_place_24)
+                    )
                 ).apply {
                     userData = it.id
                 }
@@ -157,21 +154,6 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
         )
     }
 
-    private fun getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
-        val drawable = ContextCompat.getDrawable(requireContext(), drawableId) ?: return null
-
-        val bitmap = Bitmap.createBitmap(
-            drawable.intrinsicWidth,
-            drawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        ) ?: return null
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-
-        return bitmap
-    }
-
     override fun onStop() {
         everybodyMapFrag!!.map.onStop()
         MapKitFactory.getInstance().onStop()
@@ -191,7 +173,6 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
 
     companion object {
         private const val CONTACT_ID = "id"
-        val FRAGMENT_NAME: String = EverybodyMapFragment::class.java.name
 
         @JvmStatic
         fun newInstance(contactId: String) =

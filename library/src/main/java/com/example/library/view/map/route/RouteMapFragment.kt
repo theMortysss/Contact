@@ -1,12 +1,9 @@
 package com.example.library.view.map.route
 
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -15,6 +12,7 @@ import com.example.java.entities.LocatedContact
 import com.example.library.R
 import com.example.library.databinding.FragmentRouteMapBinding
 import com.example.library.di.HasAppComponent
+import com.example.library.utils.DrawbleToBitmap.getBitmapFromVectorDrawable
 import com.example.library.utils.injectViewModel
 import com.example.library.view.map.ContactDialogFragment
 import com.example.library.view.map.DIALOG_REQUEST
@@ -148,7 +146,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
         }
         mapObjects.addPlacemark(
             Point(secondLocatedContact.latitude, secondLocatedContact.longitude),
-            ImageProvider.fromBitmap(getBitmapFromVectorDrawable(R.drawable.baseline_place_24))
+            ImageProvider.fromBitmap(getBitmapFromVectorDrawable(requireContext(), R.drawable.baseline_place_24))
         ).apply {
             userData = secondLocatedContact.id
         }
@@ -164,7 +162,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
         }
         mapObjects.addPlacemark(
             Point(firstLocatedContact.latitude, firstLocatedContact.longitude),
-            ImageProvider.fromBitmap(getBitmapFromVectorDrawable(R.drawable.baseline_place_24))
+            ImageProvider.fromBitmap(getBitmapFromVectorDrawable(requireContext(), R.drawable.baseline_place_24))
         ).apply {
             userData = firstLocatedContact.id
         }
@@ -219,7 +217,9 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
             locatedContactList.forEach {
                 mapObjects.addPlacemark(
                     Point(it.latitude, it.longitude),
-                    ImageProvider.fromBitmap(getBitmapFromVectorDrawable(R.drawable.baseline_place_24))
+                    ImageProvider.fromBitmap(
+                        getBitmapFromVectorDrawable(requireContext(), R.drawable.baseline_place_24)
+                    )
                 ).apply {
                     userData = it.id
                 }
@@ -298,21 +298,6 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     }
     // Временное >
 
-    private fun getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
-        val drawable = ContextCompat.getDrawable(requireContext(), drawableId) ?: return null
-
-        val bitmap = Bitmap.createBitmap(
-            drawable.intrinsicWidth,
-            drawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        ) ?: return null
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-
-        return bitmap
-    }
-
     override fun onStop() {
         routeMapFrag!!.map.onStop()
         MapKitFactory.getInstance().onStop()
@@ -332,7 +317,6 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
 
     companion object {
         private const val CONTACT_ID = "id"
-        val FRAGMENT_NAME: String = RouteMapFragment::class.java.name
 
         @JvmStatic
         fun newInstance(contactId: String) =

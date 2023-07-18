@@ -24,6 +24,27 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rectangle"
+        android:drawableStart="@drawable/search_icon"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:drawablePadding="6dp"
+        android:fontFamily="@font/ubuntu"
+        android:hint="@string/search"
+        android:imeOptions="actionSearch"
+        android:maxLines="1"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/contactCard" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/contactCard"
         android:layout_width="0dp"
@@ -31,7 +52,7 @@
         app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/searchView"
         app:layout_constraintBottom_toTopOf="@id/map">
 
         <ImageView
