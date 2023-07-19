@@ -31,7 +31,12 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
     private val contactId: String by lazy {
         requireArguments().getString(CONTACT_ID, "")
     }
-
+    private val startByNotification: Boolean by lazy {
+        requireArguments().getBoolean(START_TYPE, false)
+    }
+    private val check: Boolean by lazy {
+        requireArguments().getBoolean(CHECK, false)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (requireActivity().application as? HasAppComponent)
@@ -46,10 +51,17 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
         detailsFrag = FragmentContactDetailsBinding.bind(view)
 
         detailsFrag.addressChangeCard.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_contactDetailsFragment_to_contactMapFragment,
-                bundleOf(ContactMapFragment.CONTACT_ID to contactId)
-            )
+            if (startByNotification and check) {
+                findNavController().navigate(
+                    R.id.action_contactDetailsFragment2_to_contactMapFragment2,
+                    bundleOf(ContactMapFragment.CONTACT_ID to contactId)
+                )
+            } else {
+                findNavController().navigate(
+                    R.id.action_contactDetailsFragment_to_contactMapFragment,
+                    bundleOf(ContactMapFragment.CONTACT_ID to contactId)
+                )
+            }
         }
         detailsFrag.topAppBar.setNavigationOnClickListener {
             findNavController().navigateUp()
@@ -142,15 +154,17 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
     }
 
     companion object {
-
         const val CONTACT_ID = "id"
-        val FRAGMENT_NAME: String = ContactDetailsFragment::class.java.name
+        const val START_TYPE = "type"
+        const val CHECK = "check"
 
         @JvmStatic
-        fun newInstance(contactId: String) =
+        fun newInstance(contactId: String, startType: Boolean, check: Boolean) =
             ContactDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putString(CONTACT_ID, contactId)
+                    putBoolean(START_TYPE, startType)
+                    putBoolean(CHECK, check)
                 }
             }
     }

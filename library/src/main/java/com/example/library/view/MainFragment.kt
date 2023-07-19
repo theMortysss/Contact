@@ -30,15 +30,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         bottomNavigationView.setupWithNavController(navController)
 
         if (activityStartedByNotification and check) {
-            check = false
             val contactId = curIntent.getStringExtra(Constants.CONTACT_ID)
-            navToDetails(contactId)
+            navToDetails(contactId, activityStartedByNotification, check)
+            check = false
         }
     }
-    private fun navToDetails(contactId: String?) {
+    private fun navToDetails(contactId: String?, startType: Boolean, check: Boolean) {
         findNavController().navigate(
             R.id.action_mainFragment_to_contactDetailsFragment2,
-            bundleOf(ContactDetailsFragment.CONTACT_ID to contactId)
+            bundleOf(
+                ContactDetailsFragment.CONTACT_ID to contactId,
+                ContactDetailsFragment.START_TYPE to startType,
+                ContactDetailsFragment.CHECK to check
+            )
         )
     }
 }
