@@ -126,7 +126,7 @@ class EverybodyMapFragment : Fragment(R.layout.fragment_everybody_map) {
                 }
             }
             val geometry = Geometry.fromBoundingBox(getBoundingBox())
-            val position = mapView.map.cameraPosition(geometry, ZOOM, AZIMUTH, null)
+            val position = mapView.map.cameraPosition(geometry, null, null, null)
             mapView.map.move(position, Animation(Animation.Type.LINEAR, DURATION), null)
         }
     }

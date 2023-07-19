@@ -41,17 +41,19 @@ const val DURATION = 1f
 const val AZIMUTH = 0.0f
 const val TILT = 0.0f
 
-private val CENTER = Point(55.75, 37.62)
+private val CENTER = Point(66.25, 94.15)
 
-private const val BOX_SIZE = 0.2
+private const val BOX_SIZE = 90
 
 private val BOUNDING_BOX = BoundingBox(
     Point(CENTER.latitude - BOX_SIZE, CENTER.longitude - BOX_SIZE),
     Point(CENTER.latitude + BOX_SIZE, CENTER.longitude + BOX_SIZE)
 )
-private val SEARCH_OPTIONS = SuggestOptions().setSuggestTypes(
-    SuggestType.GEO.value
-)
+private val SEARCH_OPTIONS = SuggestOptions()
+    .setUserPosition(CENTER)
+    .setSuggestTypes(
+        SuggestType.GEO.value
+    )
 
 class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
 
@@ -140,10 +142,10 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         )
         suggestSession = searchManager!!.createSuggestSession()
         val from = arrayOf(android.app.SearchManager.SUGGEST_COLUMN_TEXT_1)
-        val to = intArrayOf(android.R.id.text1)
+        val to = intArrayOf(R.id.suggest_text)
         val cursorAdapter = SimpleCursorAdapter(
             context,
-            android.R.layout.simple_list_item_1,
+            R.layout.suggestion_row,
             null,
             from,
             to,
@@ -151,7 +153,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         )
         suggestResult = ArrayList()
 
-        contactMapFrag!!.searchView.setOnSearchClickListener {
+        contactMapFrag!!.searchView.setOnClickListener {
             val cursor = MatrixCursor(arrayOf(BaseColumns._ID, android.app.SearchManager.SUGGEST_COLUMN_TEXT_1))
             (suggestResult as ArrayList<String>).forEachIndexed { index, suggestion ->
                 cursor.addRow(arrayOf(index, suggestion))
@@ -210,7 +212,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
     private val suggestListener = object : SuggestSession.SuggestListener {
         override fun onResponse(suggest: MutableList<SuggestItem>) {
             suggestResult?.clear()
-            for (i in 0 until min(5, suggest.size)) {
+            for (i in 0 until min(7, suggest.size)) {
                 suggest[i].displayText?.let { suggestResult?.add(it) }
             }
         }

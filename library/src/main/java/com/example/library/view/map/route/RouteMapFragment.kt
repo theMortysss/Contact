@@ -181,7 +181,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
                     )
                 }
                 val geometry = Geometry.fromBoundingBox(getBoundingBox(routes[0].geometry.points))
-                val position = mapView.map.cameraPosition(geometry, ZOOM, AZIMUTH, null)
+                val position = mapView.map.cameraPosition(geometry, null, null, null)
                 mapView.map.move(position, Animation(Animation.Type.LINEAR, DURATION), null)
             }
         }
@@ -225,7 +225,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
                 }
             }
             val geometry = Geometry.fromBoundingBox(getBoundingBoxX(locatedContactList))
-            val position = mapView.map.cameraPosition(geometry, ZOOM, AZIMUTH, null)
+            val position = mapView.map.cameraPosition(geometry, null, null, null)
             mapView.map.move(position, Animation(Animation.Type.LINEAR, DURATION), null)
         }
         // Временное >
