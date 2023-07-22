@@ -2,7 +2,9 @@ package com.example.library.view.map.route
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -35,20 +37,24 @@ import com.yandex.runtime.network.RemoteError
 import javax.inject.Inject
 
 const val SELECTED_CONTACT_ID = "selected_id"
-const val ZOOM = 12f
-const val DURATION = 1f
-const val AZIMUTH = 0.0f
-const val TILT = 0.0f
+
+private const val ZOOM = 12f
+private const val DURATION = 1f
+private const val AZIMUTH = 0.0f
+private const val TILT = 0.0f
 
 class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
-
-    private var routeMapFrag: FragmentRouteMapBinding? = null
-    private var pdRouter: PedestrianRouter? = null
-    private val points: MutableList<RequestPoint> = ArrayList()
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var routeMapViewModel: RouteMapViewModel
+
+    private var _routeMapFrag: FragmentRouteMapBinding? = null
+    private val routeMapFrag: FragmentRouteMapBinding get() = _routeMapFrag!!
+
+    private var pdRouter: PedestrianRouter? = null
+    private val points: MutableList<RequestPoint> = ArrayList()
+
     private lateinit var locatedContactList: List<LocatedContact>
     private lateinit var firstLocatedContact: LocatedContact
     private lateinit var mapView: MapView
@@ -66,10 +72,18 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
         routeMapViewModel = injectViewModel(viewModelFactory)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _routeMapFrag = FragmentRouteMapBinding.inflate(inflater, container, false)
+        return routeMapFrag.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        routeMapFrag = FragmentRouteMapBinding.bind(view)
-        mapView = routeMapFrag!!.map
+        mapView = routeMapFrag.map
         mapObjects = mapView.map.mapObjects.addCollection()
         mapView.map.setMapLoadedListener(mapLoadedListener)
 
@@ -83,16 +97,16 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
             .observe(viewLifecycleOwner) { list ->
                 locatedContactList = list
                 if (locatedContactList.isNotEmpty()) {
-                    routeMapFrag?.apply {
-                        tv1.text = "Пользователь не выбран"
+                    routeMapFrag.apply {
+                        tv1.text = getString(R.string.noContactSelected)
                         addressTv1.text = ""
-                        tv2.text = "Пользователь не выбран"
+                        tv2.text = getString(R.string.noContactSelected)
                         addressTv2.text = ""
                     }
                 } else {
                     Toast.makeText(
                         context,
-                        "Нет контактов с локацией",
+                        getString(R.string.locatedContactsNotFound),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -137,7 +151,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     }
 
     private fun showSecondContact(secondLocatedContact: LocatedContact) {
-        routeMapFrag?.apply {
+        routeMapFrag.apply {
             tv2.text = secondLocatedContact.name
             if (!secondLocatedContact.photoUri.isNullOrEmpty()) {
                 iv2.setImageURI(secondLocatedContact.photoUri!!.toUri())
@@ -153,7 +167,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     }
 
     private fun showFirstContact(firstLocatedContact: LocatedContact) {
-        routeMapFrag?.apply {
+        routeMapFrag.apply {
             tv1.text = firstLocatedContact.name
             if (!firstLocatedContact.photoUri.isNullOrEmpty()) {
                 iv1.setImageURI(firstLocatedContact.photoUri!!.toUri())
@@ -229,7 +243,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
             mapView.map.move(position, Animation(Animation.Type.LINEAR, DURATION), null)
         }
         // Временное >
-        routeMapFrag?.firstContactCard?.setOnClickListener {
+        routeMapFrag.firstContactCard.setOnClickListener {
             dialogFragment1 = ContactDialogFragment
                 .newInstance(locatedContactList.map { it.name } as ArrayList<String>)
             setFragmentResultListener(
@@ -238,7 +252,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
             )
             dialogFragment1.show(parentFragmentManager, "dialog1")
         }
-        routeMapFrag?.secondContactCard?.setOnClickListener {
+        routeMapFrag.secondContactCard.setOnClickListener {
             dialogFragment1 = ContactDialogFragment
                 .newInstance(locatedContactList.map { it.name } as ArrayList<String>)
             setFragmentResultListener(
@@ -299,7 +313,7 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     // Временное >
 
     override fun onStop() {
-        routeMapFrag!!.map.onStop()
+        routeMapFrag.map.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
     }
@@ -307,11 +321,11 @@ class RouteMapFragment : Fragment(R.layout.fragment_route_map) {
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
-        routeMapFrag!!.map.onStart()
+        routeMapFrag.map.onStart()
     }
 
     override fun onDestroyView() {
-        routeMapFrag = null
+        _routeMapFrag = null
         super.onDestroyView()
     }
 

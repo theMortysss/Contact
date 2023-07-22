@@ -1,11 +1,12 @@
 package com.example.library.utils
 
 import android.net.Uri
+import com.example.library.BuildConfig
 
 object Constants {
+    const val MAPKIT_API_KEY = BuildConfig.MAPKIT_API_KEY
+    const val GEOCODER_API_KEY = BuildConfig.GEOCODER_API_KEY
 
-    const val MAPKIT_API_KEY = "37637e07-18dc-48f0-b4d1-7443eb500e8d"
-    const val GEOCODER_API_KEY = "9f6aa7f9-21a1-4ea1-b18a-b836a3c878f3"
     const val TAG = "Contacts"
     const val CONTACT_ID = "id"
     const val BIRTHDAY_MESSAGE = "b-msg"

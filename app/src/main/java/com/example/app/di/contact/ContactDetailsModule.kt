@@ -12,6 +12,7 @@ import dagger.Provides
 @Module
 class ContactDetailsModule {
 
+    @ContactDetailsScope
     @Provides
     fun provideContactDetailsInteractor(
         contactsRepository: IContactsRepository,

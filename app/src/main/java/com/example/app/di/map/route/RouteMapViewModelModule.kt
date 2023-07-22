@@ -10,6 +10,7 @@ import dagger.multibindings.IntoMap
 @Module
 interface RouteMapViewModelModule {
 
+    @RouteMapScope
     @Binds
     @IntoMap
     @ViewModelKey(RouteMapViewModel::class)

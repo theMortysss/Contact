@@ -19,6 +19,7 @@
         android:layout_height="?attr/actionBarSize"
         app:title="@string/contact_map_title"
         app:titleCentered="true"
+        app:menu="@menu/contact_map_top_app_bar"
         app:navigationIcon="@drawable/back"
         app:titleTextAppearance="@style/Toolbar.TitleText"/>
 

@@ -2,7 +2,9 @@ package com.example.library.view.contact
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -22,14 +24,15 @@ import javax.inject.Inject
 
 class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
 
-    private lateinit var detailsFrag: FragmentContactDetailsBinding
-
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var contactDetailsViewModel: ContactDetailsViewModel
+    private lateinit var contactDetailsViewModel: ContactDetailsViewModel
+
+    private var _detailsFrag: FragmentContactDetailsBinding? = null
+    private val detailsFrag: FragmentContactDetailsBinding get() = _detailsFrag!!
 
     private val contactId: String by lazy {
-        requireArguments().getString(CONTACT_ID, "")
+        requireArguments().getString(CONTACT_ID, "id")
     }
     private val startByNotification: Boolean by lazy {
         requireArguments().getBoolean(START_TYPE, false)
@@ -46,9 +49,17 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
         contactDetailsViewModel = injectViewModel(viewModelFactory)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _detailsFrag = FragmentContactDetailsBinding.inflate(inflater, container, false)
+        return detailsFrag.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        detailsFrag = FragmentContactDetailsBinding.bind(view)
 
         detailsFrag.addressChangeCard.setOnClickListener {
             if (startByNotification and check) {
@@ -67,7 +78,6 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
             findNavController().navigateUp()
         }
         detailsFrag.addressDeleteCard.setOnClickListener(deleteLocationDataListener)
-
         contactDetailsViewModel.getContactDetails(contactId)
             .observe(viewLifecycleOwner) { curContact ->
                 try {
@@ -92,19 +102,13 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
 
     private fun showLocationData(curLocation: LocationData?) {
         if (curLocation != null) {
-            with(curLocation) {
-                detailsFrag.apply {
-                    addressText.text = curLocation.address
-                    addressDeleteCard.visibility = View.VISIBLE
-//                    addressDeleteText.visibility = View.VISIBLE
-//                    addressDelete.visibility = View.VISIBLE
-                }
+            detailsFrag.apply {
+                addressText.text = curLocation.address
+                addressDeleteCard.visibility = View.VISIBLE
             }
         } else {
             detailsFrag.apply {
                 addressDeleteCard.visibility = View.GONE
-//                addressDelete.visibility = View.GONE
-//                addressDeleteText.visibility = View.GONE
                 addressText.text = "Адрес пока не задан"
             }
         }
@@ -147,10 +151,13 @@ class ContactDetailsFragment : Fragment(R.layout.fragment_contact_details) {
 
     private val deleteLocationDataListener = View.OnClickListener {
         detailsFrag.addressDeleteCard.visibility = View.GONE
-//        detailsFrag?.addressDelete?.visibility = View.GONE
-//        detailsFrag?.addressDeleteText?.visibility = View.GONE
         contactDetailsViewModel.deleteLocationData(contactId)
         detailsFrag.addressText.text = "Адрес пока не задан"
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _detailsFrag = null
     }
 
     companion object {

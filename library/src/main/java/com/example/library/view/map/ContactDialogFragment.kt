@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
+import com.example.library.R
 import com.example.library.view.map.route.SELECTED_CONTACT_ID
 
 const val DIALOG_REQUEST = "dialog_request"
@@ -25,7 +26,7 @@ class ContactDialogFragment : DialogFragment() {
         )
 
         return AlertDialog.Builder(requireContext())
-            .setTitle("Выберите контакт")
+            .setTitle(getString(R.string.selectContact))
             .setAdapter(contactListAdapter) { _, i ->
                 setFragmentResult(
                     DIALOG_REQUEST,

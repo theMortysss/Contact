@@ -8,7 +8,7 @@ import dagger.Provides
 
 @Module
 class EverybodyMapModule {
-
+    @EverybodyMapScope
     @Provides
     fun provideEverybodyMapInteractor(
         locationRepository: ILocationRepository

@@ -41,8 +41,7 @@ class ContactListAdapter(
                 avatar.setImageResource(R.mipmap.profile)
             }
             itemView.setOnClickListener {
-                // absoluteAdapterPosition
-                if (adapterPosition != RecyclerView.NO_POSITION) navigateTo(item.id)
+                if (absoluteAdapterPosition != RecyclerView.NO_POSITION) navigateTo(item.id)
             }
         }
     }

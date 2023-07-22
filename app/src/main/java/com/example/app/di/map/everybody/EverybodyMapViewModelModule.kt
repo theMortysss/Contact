@@ -10,6 +10,7 @@ import dagger.multibindings.IntoMap
 @Module
 interface EverybodyMapViewModelModule {
 
+    @EverybodyMapScope
     @Binds
     @IntoMap
     @ViewModelKey(EverybodyMapViewModel::class)

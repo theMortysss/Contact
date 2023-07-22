@@ -6,11 +6,10 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.provider.BaseColumns
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.CursorAdapter
-import android.widget.SearchView
-import android.widget.SimpleCursorAdapter
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -36,23 +35,26 @@ import com.yandex.runtime.image.ImageProvider
 import java.lang.Integer.min
 import javax.inject.Inject
 
-const val ZOOM = 12f
-const val DURATION = 1f
-const val AZIMUTH = 0.0f
-const val TILT = 0.0f
+private const val SUGGEST_LIST_COUNT = 9
 
-private val CENTER = Point(66.25, 94.15)
+private const val ZOOM = 12f
+private const val DURATION = 1f
+private const val AZIMUTH = 0.0f
+private const val TILT = 0.0f
 
-private const val BOX_SIZE = 90
+private const val DEFAULT_CENTER_POSITION_LONGITUDE = 94.15
+private const val DEFAULT_CENTER_POSITION_LATITUDE = 66.25
+private const val BOX_SIZE = 0.2
 
-private val BOUNDING_BOX = BoundingBox(
-    Point(CENTER.latitude - BOX_SIZE, CENTER.longitude - BOX_SIZE),
-    Point(CENTER.latitude + BOX_SIZE, CENTER.longitude + BOX_SIZE)
+private val center = Point(DEFAULT_CENTER_POSITION_LATITUDE, DEFAULT_CENTER_POSITION_LONGITUDE)
+private val boxSize = BOX_SIZE
+private val boundingBox = BoundingBox(
+    Point(center.latitude - boxSize, center.longitude - boxSize),
+    Point(center.latitude + boxSize, center.longitude + boxSize)
 )
 private val SEARCH_OPTIONS = SuggestOptions()
-    .setUserPosition(CENTER)
     .setSuggestTypes(
-        SuggestType.GEO.value
+        SearchType.GEO.value
     )
 
 class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
@@ -60,6 +62,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var contactMapViewModel: ContactMapViewModel
+
     private lateinit var contactId: String
     private lateinit var mapView: MapView
     private lateinit var curLocatedContact: LocatedContact
@@ -68,7 +71,9 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
 
     private var isNewContact = false
     private var curChangedLocationData: LocationData? = null
-    private var contactMapFrag: FragmentContactMapBinding? = null
+
+    private var _contactMapFrag: FragmentContactMapBinding? = null
+    private val contactMapFrag: FragmentContactMapBinding get() = _contactMapFrag!!
 
     private var searchManager: SearchManager? = null
     private var searchSession: Session? = null
@@ -84,20 +89,38 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         contactMapViewModel = injectViewModel(viewModelFactory)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _contactMapFrag = FragmentContactMapBinding.inflate(inflater, container, false)
+        return contactMapFrag.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        contactMapFrag = FragmentContactMapBinding.bind(view)
-        mapView = contactMapFrag!!.map
+        mapView = contactMapFrag.map
         mapObjects = mapView.map.mapObjects.addCollection()
+
         mapView.map.setMapLoadedListener(mapLoadedListener)
         mapView.map.addInputListener(inputListener)
-        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> { mapView.map.isNightModeEnabled = true }
-            Configuration.UI_MODE_NIGHT_NO -> { mapView.map.isNightModeEnabled = false }
-            Configuration.UI_MODE_NIGHT_UNDEFINED -> { mapView.map.isNightModeEnabled = false }
-        }
-        setSearchSettings()
+
+        searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
+        suggestSession = searchManager!!.createSuggestSession()
         contactId = arguments?.getString(CONTACT_ID, "") ?: ""
+
+        darkModeImpl()
+        searchImpl()
+        getContactDetails()
+
+        contactMapFrag.saveFab.setOnClickListener { saveChangedLocationData() }
+        contactMapFrag.topAppBar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun getContactDetails() {
         contactMapViewModel.getLocatedContactList().observe(viewLifecycleOwner) { locatedContactList ->
             findLocatedContact(locatedContactList)
         }
@@ -112,7 +135,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
                         longitude = 0.0,
                         address = ""
                     )
-                    contactMapFrag!!.apply {
+                    contactMapFrag.apply {
                         tv1.text = curLocatedContact.name
                         if (!curLocatedContact.photoUri.isNullOrEmpty()) {
                             iv1.setImageURI(curLocatedContact.photoUri?.toUri())
@@ -124,23 +147,22 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         }
         contactMapViewModel.getChangedLocationData().observe(viewLifecycleOwner) { locationData ->
             if (locationData != null) {
-                contactMapFrag?.saveFab?.isEnabled = false
+                contactMapFrag.saveFab.isEnabled = false
                 curChangedLocationData = locationData
-                contactMapFrag?.addressTv1?.text = locationData.address
-                contactMapFrag?.saveFab?.isEnabled = true
+                contactMapFrag.addressTv1.text = locationData.address
+                contactMapFrag.saveFab.isEnabled = true
             }
         }
-        contactMapFrag?.saveFab?.setOnClickListener { saveChangedLocationData() }
-        contactMapFrag?.topAppBar?.setNavigationOnClickListener {
-            findNavController().navigateUp()
+    }
+    private fun darkModeImpl() {
+        when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> { mapView.map.isNightModeEnabled = true }
+            Configuration.UI_MODE_NIGHT_NO -> { mapView.map.isNightModeEnabled = false }
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> { mapView.map.isNightModeEnabled = false }
         }
     }
 
-    private fun setSearchSettings() {
-        searchManager = SearchFactory.getInstance().createSearchManager(
-            SearchManagerType.ONLINE
-        )
-        suggestSession = searchManager!!.createSuggestSession()
+    private fun searchImpl() {
         val from = arrayOf(android.app.SearchManager.SUGGEST_COLUMN_TEXT_1)
         val to = intArrayOf(R.id.suggest_text)
         val cursorAdapter = SimpleCursorAdapter(
@@ -153,16 +175,10 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         )
         suggestResult = ArrayList()
 
-        contactMapFrag!!.searchView.setOnClickListener {
-            val cursor = MatrixCursor(arrayOf(BaseColumns._ID, android.app.SearchManager.SUGGEST_COLUMN_TEXT_1))
-            (suggestResult as ArrayList<String>).forEachIndexed { index, suggestion ->
-                cursor.addRow(arrayOf(index, suggestion))
-            }
-            cursorAdapter.changeCursor(cursor)
-        }
-        contactMapFrag!!.searchView.suggestionsAdapter = cursorAdapter
+        contactMapFrag.searchView.suggestionsAdapter = cursorAdapter
 
-        contactMapFrag!!.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        contactMapFrag.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                     submitQuery(query)
@@ -181,38 +197,44 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
                             }
                         }
                     }
-
                     cursorAdapter.changeCursor(cursor)
                 }
                 return true
             }
         })
 
-        contactMapFrag!!.searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+        contactMapFrag.searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+
             override fun onSuggestionSelect(position: Int): Boolean {
                 return false
             }
 
             @SuppressLint("Range")
             override fun onSuggestionClick(position: Int): Boolean {
-                val cursor = contactMapFrag!!.searchView.suggestionsAdapter.getItem(position) as Cursor
+                val cursor = contactMapFrag.searchView.suggestionsAdapter.getItem(position) as Cursor
                 val selection = cursor.getString(cursor.getColumnIndex(android.app.SearchManager.SUGGEST_COLUMN_TEXT_1))
-                contactMapFrag!!.searchView.setQuery(selection, false)
+                contactMapFrag.searchView.setQuery(selection, false)
 
-                submitQuery(contactMapFrag!!.searchView.query.toString())
+                submitQuery(contactMapFrag.searchView.query.toString())
                 return true
             }
         })
     }
 
     private fun requestSuggest(query: String) {
-        suggestSession?.suggest(query, BOUNDING_BOX, SEARCH_OPTIONS, suggestListener)
+        suggestSession?.suggest(
+            query,
+            boundingBox,
+            SEARCH_OPTIONS,
+            suggestListener
+        )
     }
 
     private val suggestListener = object : SuggestSession.SuggestListener {
+
         override fun onResponse(suggest: MutableList<SuggestItem>) {
             suggestResult?.clear()
-            for (i in 0 until min(7, suggest.size)) {
+            for (i in 0 until min(SUGGEST_LIST_COUNT, suggest.size)) {
                 suggest[i].displayText?.let { suggestResult?.add(it) }
             }
         }
@@ -227,8 +249,9 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
             VisibleRegionUtils.toPolygon(mapView.map.visibleRegion),
             SearchOptions(),
             object : Session.SearchListener {
+
                 override fun onSearchError(p0: Error) {
-                    Toast.makeText(context, "Локация не найдена", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.locationNotFound), Toast.LENGTH_SHORT).show()
                 }
                 override fun onSearchResponse(response: Response) {
                     val city = response.collection.children.firstOrNull()?.obj
@@ -260,14 +283,14 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         }
         curChangedLocationData = null
         contactMapViewModel.resetChangedLocationData()
-        Toast.makeText(context, "Локация сохранена", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, getString(R.string.saveLocation), Toast.LENGTH_SHORT).show()
     }
 
     private fun findLocatedContact(locatedContactList: List<LocatedContact>) {
         val locatedContact = locatedContactList.firstOrNull { it.id == contactId }
         if (locatedContact != null) {
             curLocatedContact = locatedContact
-            contactMapFrag!!.apply {
+            contactMapFrag.apply {
                 tv1.text = curLocatedContact.name
                 if (!curLocatedContact.photoUri.isNullOrEmpty()) {
                     iv1.setImageURI(curLocatedContact.photoUri?.toUri())
@@ -282,7 +305,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
 
     private val mapLoadedListener = MapLoadedListener {
         if (isNewContact) {
-            Toast.makeText(context, "Добавьте локацию контакта", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.addLocation), Toast.LENGTH_SHORT).show()
         } else {
             mapView.map.move(
                 CameraPosition(Point(curLocatedContact.latitude, curLocatedContact.longitude), ZOOM, AZIMUTH, TILT),
@@ -309,7 +332,7 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
                 LocationData(
                     longitude = point.longitude,
                     latitude = point.latitude,
-                    address = "..."
+                    address = getString(R.string.loading)
                 )
             )
         }
@@ -319,13 +342,12 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
         }
     }
     override fun onDestroyView() {
-        contactMapFrag = null
+        _contactMapFrag = null
         super.onDestroyView()
     }
     override fun onStop() {
-        contactMapFrag!!.map.onStop()
+        contactMapFrag.map.onStop()
         MapKitFactory.getInstance().onStop()
-
         super.onStop()
     }
 
@@ -335,9 +357,9 @@ class ContactMapFragment : Fragment(R.layout.fragment_contact_map) {
     }
 
     override fun onStart() {
-        super.onStart()
         MapKitFactory.getInstance().onStart()
-        contactMapFrag!!.map.onStart()
+        contactMapFrag.map.onStart()
+        super.onStart()
     }
     companion object {
         const val CONTACT_ID = "id"

@@ -2,8 +2,12 @@ package com.example.library.view.contacts
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -25,7 +29,8 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var contactListViewModel: ContactListViewModel
 
-    private var listFrag: FragmentContactsListBinding? = null
+    private var _listFrag: FragmentContactsListBinding? = null
+    private val listFrag: FragmentContactsListBinding get() = _listFrag!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +41,17 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
         contactListViewModel = injectViewModel(viewModelFactory)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _listFrag = FragmentContactsListBinding.inflate(inflater, container, false)
+        return listFrag.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listFrag = FragmentContactsListBinding.bind(view)
 
         val contactListAdapter = ContactListAdapter { contactId ->
             findNavController().navigate(
@@ -47,7 +60,7 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
             )
         }
 
-        listFrag?.recyclerView?.apply {
+        listFrag.recyclerView.apply {
             adapter = contactListAdapter
             layoutManager = LinearLayoutManager(context)
             itemAnimator = null
@@ -70,8 +83,21 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
                 }
             }
 
-        listFrag!!.searchView.addTextChangedListener {
-            searchContacts(listFrag!!.searchView.text.toString())
+        listFrag.searchView.addTextChangedListener {
+            searchContacts(listFrag.searchView.text.toString())
+        }
+        listFrag.topAppBar.setOnMenuItemClickListener(menuItemClickListener)
+    }
+
+    private val menuItemClickListener = object : Toolbar.OnMenuItemClickListener {
+        override fun onMenuItemClick(item: MenuItem?): Boolean {
+            return when (item?.itemId) {
+                R.id.options -> {
+                    findNavController().navigate(R.id.action_contactListFragment_to_optionsFragment)
+                    true
+                }
+                else -> { return false }
+            }
         }
     }
 
@@ -80,7 +106,7 @@ class ContactListFragment : Fragment(R.layout.fragment_contacts_list) {
     }
 
     override fun onDestroyView() {
-        listFrag = null
+        _listFrag = null
         super.onDestroyView()
     }
 

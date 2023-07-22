@@ -11,7 +11,18 @@
         android:label="ContactListFragment">
         <action
             android:id="@+id/action_contactListFragment_to_contactDetailsFragment"
-            app:destination="@id/contactDetailsFragment" />
+            app:destination="@id/contactDetailsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_contactListFragment_to_optionsFragment"
+            app:destination="@id/optionsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/contactDetailsFragment"
@@ -19,7 +30,18 @@
         android:label="ContactDetailsFragment">
         <action
             android:id="@+id/action_contactDetailsFragment_to_contactMapFragment"
-            app:destination="@id/contactMapFragment" />
+            app:destination="@id/contactMapFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_contactDetailsFragment_to_optionsFragment"
+            app:destination="@id/optionsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
@@ -28,5 +50,17 @@
     <fragment
         android:id="@+id/contactMapFragment"
         android:name="com.example.library.view.map.contact.ContactMapFragment"
-        android:label="ContactMapFragment" />
+        android:label="ContactMapFragment" >
+        <action
+            android:id="@+id/action_contactMapFragment_to_optionsFragment"
+            app:destination="@id/optionsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+    </fragment>
+    <fragment
+        android:id="@+id/optionsFragment"
+        android:name="com.example.library.view.OptionsFragment"
+        android:label="OptionsFragment" />
 </navigation>

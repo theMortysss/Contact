@@ -7,4 +7,5 @@ interface AppContainer {
     fun plusContactMapContainer(): ContactMapContainer
     fun plusEverybodyMapContainer(): EverybodyMapContainer
     fun plusRouteMapContainer(): RouteMapContainer
+    fun plusOptionsContainer(): OptionsContainer
 }

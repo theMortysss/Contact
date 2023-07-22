@@ -110,4 +110,6 @@ class ContactMapViewModel @Inject constructor(
             }
         }
     }
+
+
 }

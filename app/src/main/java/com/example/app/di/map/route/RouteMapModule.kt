@@ -8,7 +8,7 @@ import dagger.Provides
 
 @Module
 class RouteMapModule {
-
+    @RouteMapScope
     @Provides
     fun provideRouteMapInteractor(
         locationRepository: ILocationRepository

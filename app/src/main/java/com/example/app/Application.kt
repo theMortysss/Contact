@@ -6,15 +6,21 @@ import android.app.NotificationManager
 import android.content.Context
 import android.media.AudioAttributes
 import android.net.Uri
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationCompat
 import com.example.app.di.app.AppComponent
 import com.example.app.di.app.AppModule
 import com.example.app.di.app.DaggerAppComponent
+import com.example.library.DataStoreManager
 import com.example.library.di.AppContainer
 import com.example.library.di.HasAppComponent
 import com.example.library.utils.Constants.ANDROID_RESOURCE
 import com.example.library.utils.Constants.CHANNEL_ID
 import com.example.library.utils.Constants.notificationSound
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 class Application : Application(), HasAppComponent {
     private val appComponent: AppComponent by lazy {
@@ -29,6 +35,19 @@ class Application : Application(), HasAppComponent {
         )
         // Создание канала нотификаций
         createNotificationChannel()
+
+        val dataStore = DataStoreManager(applicationContext)
+
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                val nightModeEnabled = dataStore.darkModeEnabled.first()
+                if (nightModeEnabled) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            }
+        }
     }
 
     // Создание и регистрация канала нотификаций, без него нотификации не сработают на Android ver.8

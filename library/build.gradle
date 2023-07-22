@@ -22,7 +22,19 @@ android {
         dataBinding true
     }
     buildTypes {
+        def apikeyPropertiesFile = rootProject.file("apikeys.properties")
+        def apikeyProperties = new Properties()
+        apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
+        debug {
+            buildConfigField("String", "MAPKIT_API_KEY", apikeyProperties['MAPKIT_API_KEY'])
+            buildConfigField("String", "GEOCODER_API_KEY", apikeyProperties['GEOCODER_API_KEY'])
+        }
+
         release {
+            buildConfigField("String", "MAPKIT_API_KEY", apikeyProperties['MAPKIT_API_KEY'])
+            buildConfigField("String", "GEOCODER_API_KEY", apikeyProperties['GEOCODER_API_KEY'])
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -38,6 +50,10 @@ android {
 
 dependencies {
     implementation project(':java')
+
+    // DataStore Preferences
+    implementation "androidx.datastore:datastore-preferences:1.1.0-alpha04"
+
     // Lottie
     def lottie_version = "6.0.1"
     implementation "com.airbnb.android:lottie:$lottie_version"
@@ -75,6 +91,15 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
+    // Coroutine
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+
+    // Coroutine Lifecycle Scopes
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha03"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
+
     // ViewModel and LiveData
     def lifecycle_version = "2.2.0"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
@@ -98,15 +123,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.8.0"
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
     implementation "androidx.fragment:fragment-ktx:1.5.5"
     implementation 'androidx.test:core-ktx:1.5.0'
 
     implementation 'com.android.car.ui:car-ui-lib:2.5.0'
     implementation 'com.google.android.material:material:1.9.0'
-
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
 
 //    testImplementation 'junit:junit:4.13.2'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.5'

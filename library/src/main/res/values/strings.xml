@@ -32,4 +32,14 @@
     <string name="contact_map_title">Адрес контакта</string>
     <string name="address_label">Адрес:</string>
     <string name="profile_title">Ваш профиль</string>
+    <string name="addLocation">Добавьте локацию контакта</string>
+    <string name="loading">...</string>
+    <string name="saveLocation">Локация сохранена</string>
+    <string name="locationNotFound">Локация не найдена</string>
+    <string name="locatedContactsNotFound">Нет контактов с локацией</string>
+    <string name="noContactSelected">Пользователь не выбран</string>
+    <string name="selectContact">Выберите контакт</string>
+    <string name="options_title">Настройки</string>
+    <string name="use_dark_theme">Ночная тема</string>
+    <string name="general_label">Основные</string>
 </resources>

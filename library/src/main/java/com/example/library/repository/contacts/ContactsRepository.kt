@@ -98,8 +98,8 @@ class ContactsRepository(private val contentResolver: ContentResolver) :
                 if (cursor.moveToFirst()) {
                     do {
                         val name = cursor.getString(cursor.getColumnIndexOrThrow(DISPLAY_NAME))
+                        Log.d(TAG, "contactId = $contactId")
                         val birthday = getContactBirthday(contactId)
-                        Log.d(TAG, "birthday = $birthday")
                         val phone = getContactPhone(contactId)
                         val email = getContactEmail(contactId)
                         val description = getContactDescription(contactId)
@@ -190,11 +190,20 @@ class ContactsRepository(private val contentResolver: ContentResolver) :
         )?.use { cursor ->
             if (cursor.moveToFirst()) {
                 birthday = cursor.getString(0)
+                    .split("-")
                     .let { date ->
-                        Calendar.getInstance().apply {
-                            set(Calendar.DAY_OF_MONTH, date.toString().substring(6,8).toInt())
-                            set(Calendar.MONTH, date.toString().substring(4,6).toInt() - 1)
-                            set(Calendar.YEAR, date.toString().substring(0,4).toInt())
+                        if (date.size != 1) {
+                            Calendar.getInstance().apply {
+                                set(Calendar.DAY_OF_MONTH, date[2].toInt())
+                                set(Calendar.MONTH, date[1].toInt() - 1)
+                                set(Calendar.YEAR, date[0].toInt())
+                            }
+                        } else {
+                            Calendar.getInstance().apply {
+                                set(Calendar.DAY_OF_MONTH, date.toString().substring(7, 9).toInt())
+                                set(Calendar.MONTH, date.toString().substring(5, 7).toInt() - 1)
+                                set(Calendar.YEAR, date.toString().substring(1, 5).toInt())
+                            }
                         }
                     }
             }
@@ -219,7 +228,6 @@ class ContactsRepository(private val contentResolver: ContentResolver) :
                 } while (cursor.moveToNext())
             }
         }
-        Log.d(TAG, "note = $note")
         return note
     }
 }
